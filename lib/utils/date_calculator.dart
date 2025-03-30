@@ -38,18 +38,14 @@ class DateCalculator {
   }
 
   static String getDateComparisonText(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    final totalDays = difference.inDays;
+    final duration = calculateDuration(date);
+    final months = duration['months']!;
+    final days = duration['days']!;
 
-    if (totalDays < 365) {
-      final months = (totalDays / 30.44).floor();
-      final remainingDays = totalDays % 30;
-      return '$months months and $remainingDays days';
+    if (months == 0) {
+      return '$days ${days == 1 ? 'day' : 'days'}';
     } else {
-      final years = (totalDays / 365.25).floor();
-      final remainingDays = (totalDays % 365.25).floor();
-      return '$years years and $remainingDays days';
+      return '$months ${months == 1 ? 'month' : 'months'} and $days ${days == 1 ? 'day' : 'days'}';
     }
   }
 

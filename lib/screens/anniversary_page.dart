@@ -326,6 +326,12 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     final String formattedAnniversaryDate = _anniversaryDate != null
         ? DateFormat("MMMM d, y").format(_anniversaryDate!)
         : "Select Date";
+    
+    final String formattedCurrentDate = DateFormat("MMMM d, y").format(DateTime.now());
+    
+    final String displayDate = _anniversaryDate != null
+        ? "$formattedAnniversaryDate - $formattedCurrentDate"
+        : "Select Date";
 
     final String dateComparisonText = _anniversaryDate != null
         ? DateCalculator.getDateComparisonText(_anniversaryDate!)
@@ -353,7 +359,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 ),
               ),
               title: Text(
-                'Moments',
+                'Anniversary',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 24,
@@ -407,9 +413,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                 return ListTile(
                                   leading: Icon(
                                     mode == TrackingMode.Anniversary
-                                        ? Icons.cake_rounded
+                                        ? Icons.favorite_rounded
                                         : mode == TrackingMode.Monthsary
-                                            ? Icons.calendar_month_rounded
+                                            ? Icons.favorite_border_rounded
                                             : mode == TrackingMode.TotalDays
                                                 ? Icons.timer_rounded
                                                 : Icons.analytics_rounded,
@@ -558,7 +564,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                 width: 1,
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Birthdate Plus',
                               style: TextStyle(
                                 color: Colors.white,
@@ -637,73 +643,181 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         : Container(
             width: double.infinity,
             height: double.infinity,
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 40),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF2B2B3D),
+                  Color(0xFF1A1A2E),
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  SizedBox(height: 16),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(32, 16, 32, 0),
+                            padding: EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.1),
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.add_photo_alternate_rounded,
+                                    size: 32,
+                                    color: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
+                                SizedBox(height: 24),
+                                Text(
+                                  'Capture Your Moments',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  'Add photos to create beautiful memories\nand track your special moments together',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.6),
+                                    fontSize: 14,
+                                    height: 1.5,
+                                    letterSpacing: 0.3,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24),
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _anniversaryDate != null
+                                      ? "${DateFormat("MMMM d, y").format(_anniversaryDate!)} - ${DateFormat("MMMM d, y").format(DateTime.now())}"
+                                      : "Select Date",
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                                SizedBox(height: 12),
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildTimeUnit('01', 'Year'),
+                                      _buildTimeUnit('00', 'Months'),
+                                      _buildTimeUnit('00', 'Days'),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Center(
+                                  child: Text(
+                                    '0 years and 365 days',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.5),
+                                      fontSize: 13,
+                                      fontStyle: FontStyle.italic,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.2),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
-                              width: 1,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(32, 16, 32, 32),
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(24),
+                          onTap: () => pickImage(ImageSource.gallery),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add_photo_alternate_rounded,
+                                  color: Colors.white.withOpacity(0.8),
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Choose a Photo',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 20,
-                                offset: Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.add_photo_alternate_rounded,
-                            size: 50,
-                            color: Colors.white.withOpacity(0.8),
                           ),
                         ),
-                        SizedBox(height: 40),
-                        Text(
-                          'Add Image',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Select or take a photo to add your\nanniversary memories',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 16,
-                            height: 1.5,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           );
@@ -728,8 +842,14 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   }
 
   Widget _buildTimeDisplay(String dateComparisonText, String formattedAnniversaryDate) {
+    // Only show the overlay time display when there's an image
+    if (image == null) return Container();
+
+    final String formattedCurrentDate = DateFormat("MMMM d, y").format(DateTime.now());
+    final String displayDate = "$formattedAnniversaryDate - $formattedCurrentDate";
+
     return Positioned(
-      bottom: 100,  // Fixed position regardless of screenshot state
+      bottom: 100,
       left: 20,
       right: 20,
       child: AnimatedOpacity(
@@ -754,7 +874,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    formattedAnniversaryDate,
+                    displayDate,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 16,
@@ -877,6 +997,33 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTimeUnit(String value, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.6),
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
     );
   }
 } 

@@ -28,12 +28,22 @@ mixin ImageHandlerMixin<T extends StatefulWidget> on State<T> {
       );
 
       if (pickedFile != null) {
+        // Get the app's local storage directory
+        final appDir = await getApplicationDocumentsDirectory();
+        final fileName = 'saved_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final savedImagePath = '${appDir.path}/$fileName';
+
+        // Copy the picked image to app's local storage
         final File imageFile = File(pickedFile.path);
+        final File savedImage = await imageFile.copy(savedImagePath);
+
         setState(() {
-          image = imageFile;
-          imagePath = pickedFile.path;
+          image = savedImage;
+          imagePath = savedImagePath;
         });
-        await _saveImagePath(pickedFile.path);
+
+        // Save the permanent image path to SharedPreferences
+        await _saveImagePath(savedImagePath);
       }
     } catch (e) {
       print('Error picking image: $e');
@@ -58,7 +68,9 @@ mixin ImageHandlerMixin<T extends StatefulWidget> on State<T> {
             image = imageFile;
             imagePath = savedImagePath;
           });
+          print('Successfully loaded image from: $savedImagePath');
         } else {
+          print('Saved image file not found at: $savedImagePath');
           // If the file doesn't exist, remove the saved path
           await prefs.remove('image_path');
         }
@@ -72,6 +84,7 @@ mixin ImageHandlerMixin<T extends StatefulWidget> on State<T> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('image_path', path);
+      print('Saved image path to preferences: $path');
     } catch (e) {
       print('Error saving image path: $e');
     }

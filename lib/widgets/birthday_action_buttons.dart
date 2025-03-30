@@ -154,6 +154,9 @@ class BirthdayActionButtons extends StatelessWidget {
     required String label,
     required VoidCallback onPressed,
   }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final buttonColor = isDarkMode ? Colors.white : Colors.black;
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -164,12 +167,12 @@ class BirthdayActionButtons extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: Colors.white, size: 20),
+              Icon(icon, color: buttonColor, size: 20),
               SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: buttonColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
