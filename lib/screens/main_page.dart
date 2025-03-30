@@ -1,10 +1,13 @@
+import 'package:birthdate_plus/widgets/birthday_photo_card/birthday_photo_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../widgets/birthday_photo_card.dart';
 import '../providers/theme_provider.dart';
 import '../screens/anniversary_page.dart';
 import '../screens/birth_facts_page.dart';
+import '../screens/about_page.dart';
+import '../screens/privacy_policy_page.dart';
+import '../screens/contact_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -94,14 +97,84 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                             letterSpacing: -1,
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(
-                            isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                            color: isDarkMode ? Colors.white70 : Colors.black54,
-                          ),
-                          onPressed: () {
-                            context.read<ThemeProvider>().toggleTheme();
-                          },
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                                color: isDarkMode ? Colors.white70 : Colors.black54,
+                              ),
+                              onPressed: () {
+                                context.read<ThemeProvider>().toggleTheme();
+                              },
+                            ),
+                            PopupMenuButton<String>(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: isDarkMode ? Colors.white70 : Colors.black54,
+                              ),
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 'about':
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AboutPage(),
+                                      ),
+                                    );
+                                    break;
+                                  case 'privacy':
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PrivacyPolicyPage(),
+                                      ),
+                                    );
+                                    break;
+                                  case 'contact':
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ContactPage(),
+                                      ),
+                                    );
+                                    break;
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                PopupMenuItem<String>(
+                                  value: 'about',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.info_outline),
+                                      SizedBox(width: 8),
+                                      Text('About Us'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'privacy',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.privacy_tip_outlined),
+                                      SizedBox(width: 8),
+                                      Text('Privacy Policy'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'contact',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.contact_mail_outlined),
+                                      SizedBox(width: 8),
+                                      Text('Contact Us'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
