@@ -9,6 +9,8 @@ import '../screens/about_page.dart';
 import '../screens/privacy_policy_page.dart';
 import '../screens/contact_page.dart';
 import '../widgets/app_logo.dart';
+import '../services/premium_service.dart';
+import '../widgets/birthday_photo_card/premium_modal.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -100,7 +102,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         ),
                         Row(
                           children: [
-                            AppLogo(size: 32),
+                            // AppLogo(size: 32),
                             SizedBox(width: 16),
                             IconButton(
                               icon: Icon(
@@ -109,6 +111,30 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                               ),
                               onPressed: () {
                                 context.read<ThemeProvider>().toggleTheme();
+                              },
+                            ),
+                            FutureBuilder<bool>(
+                              future: PremiumService.isPremium(),
+                              builder: (context, snapshot) {
+                                final isPremium = snapshot.data ?? false;
+                                return IconButton(
+                                  icon: Icon(
+                                    isPremium ? Icons.star : Icons.star_border,
+                                    color: isPremium ? Colors.amber : (isDarkMode ? Colors.white70 : Colors.black54),
+                                  ),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) => PremiumModal(
+                                        onUpgrade: () {
+                                          setState(() {}); // Refresh UI
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
                             PopupMenuButton<String>(

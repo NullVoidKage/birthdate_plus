@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/admob_service.dart';
+import '../services/premium_service.dart';
 
 import '../widgets/time_counter_card.dart';
 import '../widgets/bottom_buttons.dart';
@@ -224,17 +225,22 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     });
     
     try {
-      // Show reward ad first
-      final bool adCompleted = await _adMobService.showRewardedAd();
+      // Check if user is premium
+      final isPremium = await PremiumService.isPremium();
       
-      if (!adCompleted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please watch the ad to save your anniversary card'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+      if (!isPremium) {
+        // Show reward ad first
+        final bool adCompleted = await _adMobService.showRewardedAd();
+        
+        if (!adCompleted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please watch the ad to save your anniversary card'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
       }
 
       setState(() {
@@ -283,7 +289,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       );
     } finally {
       setState(() {
-        setSaving(false);
+        _isSaving = false;
         _takingScreenshot = false;
       });
     }
@@ -404,17 +410,22 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     });
 
     try {
-      // Show reward ad first
-      final bool adCompleted = await _adMobService.showRewardedAd();
+      // Check if user is premium
+      final isPremium = await PremiumService.isPremium();
       
-      if (!adCompleted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please watch the ad to share your anniversary card'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+      if (!isPremium) {
+        // Show reward ad first
+        final bool adCompleted = await _adMobService.showRewardedAd();
+        
+        if (!adCompleted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please watch the ad to share your anniversary card'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
       }
 
       setState(() {
@@ -454,16 +465,18 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         [XFile(filePath)],
         text: message,
       );
-
     } catch (e) {
-      print('Error preparing share: $e');
+      print('Error sharing image: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error preparing share'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Error sharing image: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() {
-        _takingScreenshot = false;
         _isSaving = false;
+        _takingScreenshot = false;
       });
     }
   }
@@ -712,6 +725,44 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                           _buildOverlay(),
                           _buildTimeDisplay(dateComparisonText, formattedAnniversaryDate),
                           if (_showHearts) ..._hearts.map((heart) => heart.build()),
+                          FutureBuilder<bool>(
+                            future: PremiumService.isPremium(),
+                            builder: (context, snapshot) {
+                              final isPremium = snapshot.data ?? false;
+                              if (isPremium) return SizedBox.shrink();
+                              
+                              return Positioned(
+                                top: 150,
+                                right: 20,
+                                child: RotatedBox(
+                                  quarterTurns: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Birthdate Plus',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -985,60 +1036,78 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       bottom: 100,
       left: 20,
       right: 20,
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 300),
-        opacity: 0.9,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 1,
+      child: FutureBuilder<bool>(
+        future: PremiumService.isPremium(),
+        builder: (context, snapshot) {
+          final isPremium = snapshot.data ?? false;
+          return AnimatedOpacity(
+            duration: Duration(milliseconds: 300),
+            opacity: 0.9,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        displayDate,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      if (_trackingMode == TrackingMode.Statistics && _anniversaryDate != null)
+                        RelationshipStats(
+                          anniversaryDate: _anniversaryDate!,
+                          currentDate: DateTime.now(),
+                        )
+                      else
+                        _buildTimeCounters(),
+                      SizedBox(height: 8),
+                      Text(
+                        dateComparisonText,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.italic,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      if (!isPremium) ...[
+                        SizedBox(height: 16),
+                        Text(
+                          'Birthdate Plus',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    displayDate,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  if (_trackingMode == TrackingMode.Statistics && _anniversaryDate != null)
-                    RelationshipStats(
-                      anniversaryDate: _anniversaryDate!,
-                      currentDate: DateTime.now(),
-                    )
-                  else
-                    _buildTimeCounters(),
-                  SizedBox(height: 8),
-                  Text(
-                    dateComparisonText,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.italic,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

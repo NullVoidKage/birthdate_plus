@@ -15,6 +15,7 @@ import '../widgets/birthday_photo_card/premium_modal.dart';
 import '../services/image_service.dart';
 import '../services/preferences_service.dart';
 import '../services/admob_service.dart';
+import '../services/premium_service.dart';
 import '../utils/date_utils.dart' as date_utils;
 import '../widgets/birthday_info_panel.dart';
 import '../widgets/birthday_action_buttons.dart';
@@ -154,17 +155,22 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
     });
     
     try {
-      // Show reward ad first
-      final bool adCompleted = await _adMobService.showRewardedAd();
+      // Check if user is premium
+      final isPremium = await PremiumService.isPremium();
       
-      if (!adCompleted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please watch the ad to save your photo'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+      if (!isPremium) {
+        // Show reward ad first
+        final bool adCompleted = await _adMobService.showRewardedAd();
+        
+        if (!adCompleted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please watch the ad to save your photo'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
       }
 
       setState(() {
@@ -474,34 +480,42 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                       Positioned(
                         top: 150,
                         right: 20,
-                        child: FadeTransition(
-                          opacity: _fadeAnimation,
-                          child: RotatedBox(
-                            quarterTurns: 1,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: overlayColor,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: accentColor.withOpacity(0.2),
-                                  width: 1,
+                        child: FutureBuilder<bool>(
+                          future: PremiumService.isPremium(),
+                          builder: (context, snapshot) {
+                            final isPremium = snapshot.data ?? false;
+                            if (isPremium) return SizedBox.shrink();
+                            
+                            return FadeTransition(
+                              opacity: _fadeAnimation,
+                              child: RotatedBox(
+                                quarterTurns: 1,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: overlayColor,
+                                    borderRadius: BorderRadius.circular(30),
+                                    border: Border.all(
+                                      color: accentColor.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Birthdate Plus',
+                                    style: TextStyle(
+                                      color: accentColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                'Birthdate Plus',
-                                style: TextStyle(
-                                  color: accentColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w300,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ),
                       if (!_isSavingMode)

@@ -45,6 +45,9 @@ dependencies:
   cross_file: ^0.3.3+9
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.5
+  in_app_purchase: ^3.1.11
+  in_app_purchase_android: ^0.3.0
+  in_app_purchase_storekit: ^0.3.12
 
 dev_dependencies:
   flutter_test:
