@@ -1,4 +1,4 @@
-import 'package:birthdate_plus/widgets/birthday_photo_card/birthday_photo_card.dart';
+import 'package:birthdate_plus/screens/birthday_photo_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,7 @@ import '../screens/birth_facts_page.dart';
 import '../screens/about_page.dart';
 import '../screens/privacy_policy_page.dart';
 import '../screens/contact_page.dart';
+import '../widgets/app_logo.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -99,6 +100,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         ),
                         Row(
                           children: [
+                            AppLogo(size: 32),
+                            SizedBox(width: 16),
                             IconButton(
                               icon: Icon(
                                 isDarkMode ? Icons.light_mode : Icons.dark_mode,

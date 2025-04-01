@@ -8,7 +8,6 @@ class BirthdayAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onTimeFormatToggle;
   final VoidCallback onCustomize;
   final VoidCallback onVisibilityToggle;
-  final VoidCallback onResetPosition;
   final VoidCallback onObfuscateToggle;
   final VoidCallback onResetAll;
 
@@ -20,7 +19,6 @@ class BirthdayAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onTimeFormatToggle,
     required this.onCustomize,
     required this.onVisibilityToggle,
-    required this.onResetPosition,
     required this.onObfuscateToggle,
     required this.onResetAll,
   }) : super(key: key);
@@ -152,21 +150,6 @@ class BirthdayAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
               ),
-              PopupMenuItem(
-                value: 'reset_position',
-                child: ListTile(
-                  leading: Icon(
-                    Icons.refresh_outlined,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                  ),
-                  title: Text(
-                    'Reset Image Position',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ),
-              ),
               PopupMenuDivider(),
               PopupMenuItem(
                 value: 'reset_all',
@@ -196,77 +179,17 @@ class BirthdayAppBar extends StatelessWidget implements PreferredSizeWidget {
                 case 'visibility':
                   onVisibilityToggle();
                   break;
-                case 'reset_position':
-                  onResetPosition();
-                  break;
                 case 'obfuscate':
                   onObfuscateToggle();
                   break;
                 case 'reset_all':
-                  _showResetConfirmationDialog(context, isDarkMode);
+                  onResetAll();
                   break;
               }
             },
           ),
         ),
       ],
-    );
-  }
-
-  void _showResetConfirmationDialog(BuildContext context, bool isDarkMode) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? Color(0xFF2C2C2C) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Text(
-          'Reset Everything?',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          'This will clear your image, date, and all customizations.',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white70 : Colors.black87,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple, Colors.blue],
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                onResetAll();
-              },
-              child: Text(
-                'Reset',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 } 

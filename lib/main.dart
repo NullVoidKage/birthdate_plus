@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'providers/theme_provider.dart';
 import 'viewmodels/age_calculator_viewmodel.dart';
 import 'screens/main_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize AdMob
+  await MobileAds.instance.initialize();
+  
   runApp(
     MultiProvider(
       providers: [

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/admob_service.dart';
 
 import '../widgets/time_counter_card.dart';
 import '../widgets/bottom_buttons.dart';
@@ -31,6 +33,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   Timer? _timer;
   bool _takingScreenshot = false;
   final GlobalKey _globalKey = GlobalKey();
+  final AdMobService _adMobService = AdMobService();
 
   // Duration calculation variables
   int _years = 0;
@@ -52,6 +55,11 @@ class _AnniversaryPageState extends State<AnniversaryPage>
 
   // Tracking mode
   TrackingMode _trackingMode = TrackingMode.Anniversary;
+
+  // Heart animation variables
+  List<HeartAnimation> _hearts = [];
+  Timer? _heartTimer;
+  bool _showHearts = false;
 
   @override
   void initState() {
@@ -75,6 +83,15 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     });
 
     _startTimer();
+
+    // Start heart animation timer
+    _heartTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      if (_showHearts && mounted) {
+        setState(() {
+          _updateHearts();
+        });
+      }
+    });
   }
 
   Future<void> _loadSavedData() async {
@@ -121,6 +138,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   void dispose() {
     _timer?.cancel();
     _animationController.dispose();
+    _heartTimer?.cancel();
     super.dispose();
   }
 
@@ -195,6 +213,19 @@ class _AnniversaryPageState extends State<AnniversaryPage>
 
   Future<void> _saveImage() async {
     try {
+      // Show reward ad first
+      final bool adCompleted = await _adMobService.showRewardedAd();
+      
+      if (!adCompleted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please watch the ad to save your anniversary card'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       setState(() {
         setSaving(true);
         _takingScreenshot = true;
@@ -315,6 +346,141 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         );
       },
     );
+  }
+
+  void _updateHearts() {
+    _hearts.removeWhere((heart) => heart.isComplete);
+    if (_hearts.length < 20 && _showHearts) {
+      // Add multiple hearts at different positions
+      for (int i = 0; i < 3; i++) {
+        _hearts.add(HeartAnimation(
+          position: Offset(
+            20 + Random().nextDouble() * (MediaQuery.of(context).size.width - 40),
+            MediaQuery.of(context).size.height - 150,
+          ),
+        ));
+      }
+    }
+    for (var heart in _hearts) {
+      heart.update();
+    }
+  }
+
+  void _toggleHearts() {
+    setState(() {
+      _showHearts = !_showHearts;
+      if (_showHearts) {
+        // Add initial burst of hearts
+        for (int i = 0; i < 10; i++) {
+          _hearts.add(HeartAnimation(
+            position: Offset(
+              20 + Random().nextDouble() * (MediaQuery.of(context).size.width - 40),
+              MediaQuery.of(context).size.height - 150,
+            ),
+          ));
+        }
+      } else {
+        _hearts.clear();
+      }
+    });
+  }
+
+  Future<void> _shareWithTemplate() async {
+    try {
+      setState(() {
+        _takingScreenshot = true;
+      });
+
+      // Short delay to ensure UI updates
+      await Future.delayed(Duration(milliseconds: 100));
+
+      final boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 3.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData == null) {
+        throw Exception('Failed to capture image');
+      }
+
+      final pngBytes = byteData.buffer.asUint8List();
+      
+      // Show template selection dialog
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.9),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  'Share Options',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Divider(color: Colors.white24),
+              ListTile(
+                leading: Icon(Icons.favorite, color: Colors.pink),
+                title: Text('Classic Love', style: TextStyle(color: Colors.white)),
+                onTap: () => _processAndShare(pngBytes, 'classic'),
+              ),
+              ListTile(
+                leading: Icon(Icons.star, color: Colors.amber),
+                title: Text('Story Format', style: TextStyle(color: Colors.white)),
+                onTap: () => _processAndShare(pngBytes, 'story'),
+              ),
+              ListTile(
+                leading: Icon(Icons.celebration, color: Colors.purple),
+                title: Text('Celebration', style: TextStyle(color: Colors.white)),
+                onTap: () => _processAndShare(pngBytes, 'celebration'),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      print('Error preparing share: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error preparing share'), backgroundColor: Colors.red),
+      );
+    } finally {
+      setState(() {
+        _takingScreenshot = false;
+      });
+    }
+  }
+
+  Future<void> _processAndShare(Uint8List imageBytes, String template) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final filePath = '${directory.path}/anniversary_${template}_$timestamp.png';
+    
+    // Save processed image
+    File file = File(filePath);
+    await file.writeAsBytes(imageBytes);
+
+    // Share with custom message based on template
+    String message = 'Celebrating ${_years} years';
+    if (_years == 0) {
+      message = 'Celebrating ${_months} months and ${_days} days';
+    }
+    message += ' of love! 💑\n#CoupleGoals #Love #Anniversary';
+    
+    Share.shareXFiles(
+      [XFile(filePath)],
+      text: message,
+    );
+    
+    Navigator.pop(context); // Close bottom sheet
   }
 
   @override
@@ -519,102 +685,74 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 SizedBox(width: 8),
               ],
             ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.grey[800]!.withOpacity(0.5),
-              Colors.grey[700]!.withOpacity(0.4),
-              Colors.grey[600]!.withOpacity(0.5),
-            ],
+      body: GestureDetector(
+        onTapDown: (details) {
+          if (!_takingScreenshot) {
+            _toggleHearts();
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.grey[800]!.withOpacity(0.5),
+                Colors.grey[700]!.withOpacity(0.4),
+                Colors.grey[600]!.withOpacity(0.5),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: RepaintBoundary(
-                key: _globalKey,
-                child: Stack(
-                  fit: StackFit.expand,  // Make sure Stack fills the space
-                  children: [
-                    // Background or image
-                    _buildBackgroundImage(),
-                    _buildOverlay(),
-                    _buildTimeDisplay(dateComparisonText, formattedAnniversaryDate),
-                    // Right side text
-                    Positioned(
-                      top: 150,
-                      right: 20,
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: RotatedBox(
-                          quarterTurns: 1,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 20,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                                width: 1,
-                              ),
-                            ),
-                            child: const Text(
-                              'Birthdate Plus',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: RepaintBoundary(
+                      key: _globalKey,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          _buildBackgroundImage(),
+                          _buildOverlay(),
+                          _buildTimeDisplay(dateComparisonText, formattedAnniversaryDate),
+                          if (_showHearts) ..._hearts.map((heart) => heart.build()),
+                        ],
                       ),
                     ),
-                    if (!_takingScreenshot)
-                      Positioned(
-                        bottom: 20,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.calendar_today_rounded, color: Colors.white),
-                                onPressed: _pickDate,
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.camera_alt_rounded, color: Colors.white),
-                                onPressed: () => pickImage(ImageSource.camera),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.photo_library_rounded, color: Colors.white),
-                                onPressed: () => pickImage(ImageSource.gallery),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.save_alt_rounded,
-                                  color: image != null ? Colors.white : Colors.white.withOpacity(0.3),
-                                ),
-                                onPressed: image != null ? _saveImage : null,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              
+              if (!_takingScreenshot)
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.calendar_today, color: Colors.white),
+                        onPressed: _pickDate,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.camera_alt, color: Colors.white),
+                        onPressed: () => pickImage(ImageSource.camera),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.photo_library, color: Colors.white),
+                        onPressed: () => pickImage(ImageSource.gallery),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.share, color: Colors.white),
+                        onPressed: _shareWithTemplate,
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -1024,6 +1162,50 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           ),
         ),
       ],
+    );
+  }
+}
+
+class HeartAnimation {
+  Offset position;
+  double opacity = 1.0;
+  double scale = 0.0;
+  bool isComplete = false;
+  double rotation = 0.0;
+
+  HeartAnimation({required this.position}) {
+    rotation = Random().nextDouble() * 6.28; // Random rotation (0 to 2π)
+  }
+
+  void update() {
+    position = Offset(
+      position.dx + (Random().nextDouble() - 0.5) * 2, // Add slight horizontal movement
+      position.dy - 4, // Move up faster
+    );
+    opacity = (opacity - 0.01).clamp(0.0, 1.0);
+    scale = opacity;
+    rotation += 0.05;
+    if (opacity <= 0) isComplete = true;
+  }
+
+  Widget build() {
+    return Positioned(
+      left: position.dx,
+      top: position.dy,
+      child: Opacity(
+        opacity: opacity.clamp(0.0, 1.0),
+        child: Transform.rotate(
+          angle: rotation,
+          child: Transform.scale(
+            scale: scale.clamp(0.0, 1.0),
+            child: Icon(
+              Icons.favorite,
+              color: Colors.pink.shade200,
+              size: 32,
+            ),
+          ),
+        ),
+      ),
     );
   }
 } 

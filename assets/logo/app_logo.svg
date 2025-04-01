@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="256" cy="256" r="240" fill="#FF6B6B"/>
+    
+    <!-- Plus Sign -->
+    <rect x="236" y="96" width="40" height="320" rx="8" fill="white"/>
+    <rect x="96" y="236" width="320" height="40" rx="8" fill="white"/>
+    
+    <!-- Cake Base -->
+    <rect x="156" y="336" width="200" height="40" rx="8" fill="white"/>
+    
+    <!-- Cake Layers -->
+    <rect x="176" y="296" width="160" height="40" rx="8" fill="white"/>
+    <rect x="196" y="256" width="120" height="40" rx="8" fill="white"/>
+    
+    <!-- Candle -->
+    <rect x="246" y="216" width="20" height="40" rx="4" fill="white"/>
+    <circle cx="256" cy="216" r="8" fill="#FFD93D"/>
+</svg> 
