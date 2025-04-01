@@ -32,6 +32,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   late Animation<double> _fadeAnimation;
   Timer? _timer;
   bool _takingScreenshot = false;
+  bool _isSaving = false;
   final GlobalKey _globalKey = GlobalKey();
   final AdMobService _adMobService = AdMobService();
 
@@ -92,6 +93,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         });
       }
     });
+
+    // Preload the rewarded ad
+    _adMobService.loadRewardedAd();
   }
 
   Future<void> _loadSavedData() async {
@@ -104,7 +108,8 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       });
     } else {
       setState(() {
-        _anniversaryDate = DateTime.now().subtract(Duration(days: 365));
+        final now = DateTime.now();
+        _anniversaryDate = DateTime(now.year, now.month - 1, now.day);
       });
     }
 
@@ -212,6 +217,12 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   }
 
   Future<void> _saveImage() async {
+    if (_isSaving) return; // Prevent multiple clicks while saving
+    
+    setState(() {
+      _isSaving = true;
+    });
+    
     try {
       // Show reward ad first
       final bool adCompleted = await _adMobService.showRewardedAd();
@@ -259,7 +270,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       await file.writeAsBytes(pngBytes);
 
       // Show success dialog and optionally share
-      _showSuccessDialog(filePath, pngBytes);
+      _showSuccessDialog(file);
 
       print('Image saved successfully at $filePath');
     } catch (e) {
@@ -278,7 +289,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     }
   }
 
-  void _showSuccessDialog(String filePath, Uint8List imageBytes) {
+  void _showSuccessDialog(File file) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -286,16 +297,16 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         return AlertDialog(
           backgroundColor: isDarkMode ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Image Saved',
+            'Photo Saved',
             style: TextStyle(
-              color: isDarkMode ? Colors.white70 : Colors.black87,
+              color: isDarkMode ? Colors.white : Colors.black,
             ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Your image has been saved successfully',
+                'Your photo has been saved successfully',
                 style: TextStyle(
                   color: isDarkMode ? Colors.white70 : Colors.black87,
                 ),
@@ -306,7 +317,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 width: 200,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: MemoryImage(imageBytes),
+                    image: FileImage(file),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -330,7 +341,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
             ),
             TextButton(
               onPressed: () {
-                Share.shareXFiles([XFile(filePath)],
+                Share.shareXFiles([XFile(file.path)],
                     text: 'Check out my anniversary card!');
               },
               child: Text(
@@ -386,7 +397,26 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   }
 
   Future<void> _shareWithTemplate() async {
+    if (_isSaving) return; // Prevent multiple clicks while sharing
+    
+    setState(() {
+      _isSaving = true;
+    });
+
     try {
+      // Show reward ad first
+      final bool adCompleted = await _adMobService.showRewardedAd();
+      
+      if (!adCompleted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please watch the ad to share your anniversary card'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       setState(() {
         _takingScreenshot = true;
       });
@@ -404,49 +434,27 @@ class _AnniversaryPageState extends State<AnniversaryPage>
 
       final pngBytes = byteData.buffer.asUint8List();
       
-      // Show template selection dialog
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) => Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.9),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(
-                  'Share Options',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Divider(color: Colors.white24),
-              ListTile(
-                leading: Icon(Icons.favorite, color: Colors.pink),
-                title: Text('Classic Love', style: TextStyle(color: Colors.white)),
-                onTap: () => _processAndShare(pngBytes, 'classic'),
-              ),
-              ListTile(
-                leading: Icon(Icons.star, color: Colors.amber),
-                title: Text('Story Format', style: TextStyle(color: Colors.white)),
-                onTap: () => _processAndShare(pngBytes, 'story'),
-              ),
-              ListTile(
-                leading: Icon(Icons.celebration, color: Colors.purple),
-                title: Text('Celebration', style: TextStyle(color: Colors.white)),
-                onTap: () => _processAndShare(pngBytes, 'celebration'),
-              ),
-              SizedBox(height: 20),
-            ],
-          ),
-        ),
+      // Save and share with classic template directly
+      final directory = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final filePath = '${directory.path}/anniversary_classic_$timestamp.png';
+      
+      // Save processed image
+      File file = File(filePath);
+      await file.writeAsBytes(pngBytes);
+
+      // Share with custom message
+      String message = 'Celebrating ${_years} years';
+      if (_years == 0) {
+        message = 'Celebrating ${_months} months and ${_days} days';
+      }
+      message += ' of love! 💑\n#CoupleGoals #Love #Anniversary';
+      
+      Share.shareXFiles(
+        [XFile(filePath)],
+        text: message,
       );
+
     } catch (e) {
       print('Error preparing share: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -455,32 +463,19 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     } finally {
       setState(() {
         _takingScreenshot = false;
+        _isSaving = false;
       });
     }
   }
 
-  Future<void> _processAndShare(Uint8List imageBytes, String template) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final filePath = '${directory.path}/anniversary_${template}_$timestamp.png';
-    
-    // Save processed image
-    File file = File(filePath);
-    await file.writeAsBytes(imageBytes);
-
-    // Share with custom message based on template
-    String message = 'Celebrating ${_years} years';
-    if (_years == 0) {
-      message = 'Celebrating ${_months} months and ${_days} days';
+  Future<void> _saveImagePath(String path) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('image_path', path);
+      print('Saved image path to preferences: $path');
+    } catch (e) {
+      print('Error saving image path: $e');
     }
-    message += ' of love! 💑\n#CoupleGoals #Love #Anniversary';
-    
-    Share.shareXFiles(
-      [XFile(filePath)],
-      text: message,
-    );
-    
-    Navigator.pop(context); // Close bottom sheet
   }
 
   @override
@@ -1163,6 +1158,52 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         ),
       ],
     );
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        // Get the app's local storage directory
+        final appDir = await getApplicationDocumentsDirectory();
+        final fileName = 'saved_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final savedImagePath = '${appDir.path}/$fileName';
+
+        // Copy the picked image to app's local storage
+        final File imageFile = File(pickedFile.path);
+        final File savedImage = await imageFile.copy(savedImagePath);
+
+        // Update state first
+        setState(() {
+          image = savedImage;
+          imagePath = savedImagePath;
+        });
+
+        // Save the permanent image path to SharedPreferences
+        await _saveImagePath(savedImagePath);
+
+        // Reset animation and forward it
+        if (mounted) {
+          _animationController.reset();
+          _animationController.forward();
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error picking image: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
