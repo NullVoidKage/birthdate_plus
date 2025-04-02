@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
 import '../services/admob_service.dart';
 import '../services/premium_service.dart';
 
@@ -493,23 +494,333 @@ class _AnniversaryPageState extends State<AnniversaryPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      final String formattedAnniversaryDate = _anniversaryDate != null
+          ? DateFormat("MMMM d, y").format(_anniversaryDate!)
+          : "Birth Date";
+      
+      final String formattedCurrentDate = DateFormat("MMMM d, y").format(DateTime.now());
+      
+      final String displayDate = _anniversaryDate != null
+          ? "$formattedAnniversaryDate - $formattedCurrentDate"
+          : "Birth Date";
+
+      final String dateComparisonText = _anniversaryDate != null
+          ? DateCalculator.getDateComparisonText(_anniversaryDate!)
+          : "Birth Date";
+
+      return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: _takingScreenshot
+            ? null
+            : AppBar(
+                backgroundColor: Colors.black.withOpacity(0.2),
+                elevation: 0,
+                centerTitle: true,
+                flexibleSpace: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(20),
+                  ),
+                ),
+                title: Text(
+                  "Anniversary Cards",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                    letterSpacing: 0.5,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 3.0,
+                        color: Colors.black.withOpacity(0.3),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Container(
+                  margin: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_ios_new_rounded),
+                    onPressed: () => Navigator.of(context).pop(),
+                    color: Colors.white,
+                  ),
+                ),
+                actions: [
+                  Container(
+                    margin: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.menu_rounded, color: Colors.white),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.9),
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ...TrackingMode.values.map((mode) {
+                                  return ListTile(
+                                    leading: Icon(
+                                      mode == TrackingMode.Anniversary
+                                          ? Icons.favorite_rounded
+                                          : mode == TrackingMode.Monthsary
+                                              ? Icons.favorite_border_rounded
+                                              : mode == TrackingMode.TotalDays
+                                                  ? Icons.timer_rounded
+                                                  : Icons.analytics_rounded,
+                                      color: _trackingMode == mode
+                                          ? Colors.purple.shade200
+                                          : Colors.white70,
+                                    ),
+                                    title: Text(
+                                      mode == TrackingMode.Anniversary
+                                          ? "Anniversary Cards"
+                                          : mode == TrackingMode.Monthsary
+                                              ? "Months"
+                                              : mode == TrackingMode.TotalDays
+                                                  ? "Days"
+                                                  : "Settings",
+                                      style: TextStyle(
+                                        color: _trackingMode == mode
+                                            ? Colors.purple.shade200
+                                            : Colors.white70,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      _toggleTrackingMode(mode);
+                                      Navigator.pop(context);
+                                    },
+                                    selected: _trackingMode == mode,
+                                    selectedTileColor: Colors.purple.withOpacity(0.1),
+                                  );
+                                }).toList(),
+                                Divider(
+                                  color: Colors.white.withOpacity(0.1),
+                                  thickness: 1,
+                                  height: 1,
+                                ),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.refresh_rounded,
+                                    color: Colors.white70,
+                                  ),
+                                  title: Text(
+                                    "Settings",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          backgroundColor: Colors.grey[850],
+                                          title: Text(
+                                            "Settings",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          content: Text(
+                                            "Discover Facts",
+                                            style: TextStyle(color: Colors.white70),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "Settings",
+                                                style: TextStyle(color: Colors.white70),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                final prefs = await SharedPreferences.getInstance();
+                                                await prefs.remove('anniversary_date');
+                                                await prefs.remove('image_path');
+                                                setState(() {
+                                                  _anniversaryDate = null;
+                                                  image = null;
+                                                  imagePath = null;
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "Settings",
+                                                style: TextStyle(color: Colors.red[300]),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                ],
+              ),
+        body: GestureDetector(
+          onTapDown: (details) {
+            if (!_takingScreenshot) {
+              _toggleHearts();
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.grey[800]!.withOpacity(0.5),
+                  Colors.grey[700]!.withOpacity(0.4),
+                  Colors.grey[600]!.withOpacity(0.5),
+                ],
+              ),
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: RepaintBoundary(
+                        key: _globalKey,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            _buildBackgroundImage(),
+                            _buildOverlay(),
+                            _buildTimeDisplay(dateComparisonText, formattedAnniversaryDate),
+                            if (_showHearts) ..._hearts.map((heart) => heart.build()),
+                            FutureBuilder<bool>(
+                              future: PremiumService.isPremium(),
+                              builder: (context, snapshot) {
+                                final isPremium = snapshot.data ?? false;
+                                if (isPremium) return SizedBox.shrink();
+                                
+                                return Positioned(
+                                  top: 150,
+                                  right: 20,
+                                  child: RotatedBox(
+                                    quarterTurns: 1,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 20,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.3),
+                                        borderRadius: BorderRadius.circular(30),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.2),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "Birthdate Plus",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                if (!_takingScreenshot)
+                  Positioned(
+                    bottom: 20,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.calendar_today, color: Colors.white),
+                          onPressed: _pickDate,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.camera_alt, color: Colors.white),
+                          onPressed: () => pickImage(ImageSource.camera),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.photo_library, color: Colors.white),
+                          onPressed: () => pickImage(ImageSource.gallery),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.share, color: Colors.white),
+                          onPressed: _shareWithTemplate,
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     if (_anniversaryDate != null) {
       _calculateDuration();
     }
 
     final String formattedAnniversaryDate = _anniversaryDate != null
         ? DateFormat("MMMM d, y").format(_anniversaryDate!)
-        : "Select Date";
+        : l10n.birthDate;
     
     final String formattedCurrentDate = DateFormat("MMMM d, y").format(DateTime.now());
     
     final String displayDate = _anniversaryDate != null
         ? "$formattedAnniversaryDate - $formattedCurrentDate"
-        : "Select Date";
+        : l10n.birthDate;
 
     final String dateComparisonText = _anniversaryDate != null
         ? DateCalculator.getDateComparisonText(_anniversaryDate!)
-        : "Select Date";
+        : l10n.birthDate;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -533,7 +844,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 ),
               ),
               title: Text(
-                'Anniversary',
+                l10n.anniversaryCards,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 24,
@@ -599,12 +910,12 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   ),
                                   title: Text(
                                     mode == TrackingMode.Anniversary
-                                        ? 'Anniversary'
+                                        ? l10n.anniversaryCards
                                         : mode == TrackingMode.Monthsary
-                                            ? 'Monthsary'
+                                            ? l10n.months
                                             : mode == TrackingMode.TotalDays
-                                                ? 'Total Time'
-                                                : 'Statistics',
+                                                ? l10n.days
+                                                : l10n.settings,
                                     style: TextStyle(
                                       color: _trackingMode == mode
                                           ? Colors.purple.shade200
@@ -630,7 +941,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   color: Colors.white70,
                                 ),
                                 title: Text(
-                                  'Reset Page',
+                                  l10n.settings,
                                   style: TextStyle(
                                     color: Colors.white70,
                                   ),
@@ -643,11 +954,11 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                       return AlertDialog(
                                         backgroundColor: Colors.grey[850],
                                         title: Text(
-                                          'Reset Page',
+                                          l10n.settings,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         content: Text(
-                                          'This will clear your image and date. Are you sure?',
+                                          l10n.discoverFacts,
                                           style: TextStyle(color: Colors.white70),
                                         ),
                                         actions: [
@@ -656,7 +967,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                               Navigator.pop(context);
                                             },
                                             child: Text(
-                                              'Cancel',
+                                              l10n.settings,
                                               style: TextStyle(color: Colors.white70),
                                             ),
                                           ),
@@ -673,7 +984,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                               Navigator.pop(context);
                                             },
                                             child: Text(
-                                              'Reset',
+                                              l10n.settings,
                                               style: TextStyle(color: Colors.red[300]),
                                             ),
                                           ),
@@ -750,7 +1061,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                       ),
                                     ),
                                     child: Text(
-                                      'Birthdate Plus',
+                                      l10n.appTitle,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
@@ -878,26 +1189,62 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   ),
                                 ),
                                 SizedBox(height: 24),
-                                Text(
-                                  'Capture Your Moments',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Add photos to create beautiful memories\nand track your special moments together',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 14,
-                                    height: 1.5,
-                                    letterSpacing: 0.3,
-                                    fontWeight: FontWeight.w300,
-                                  ),
+                                Builder(
+                                  builder: (context) {
+                                    final l10n = AppLocalizations.of(context);
+                                    if (l10n == null) {
+                                      return Column(
+                                        children: [
+                                          Text(
+                                            "Capture Moments",
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.9),
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.2,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),
+                                          Text(
+                                            "Add photos to create beautiful anniversary cards",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.6),
+                                              fontSize: 14,
+                                              height: 1.5,
+                                              letterSpacing: 0.3,
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    return Column(
+                                      children: [
+                                        Text(
+                                          l10n.captureMoments,
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(0.9),
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w500,
+                                            letterSpacing: 0.2,
+                                          ),
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          l10n.addPhotosDescription,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(0.6),
+                                            fontSize: 14,
+                                            height: 1.5,
+                                            letterSpacing: 0.3,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -941,14 +1288,30 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                 ),
                                 SizedBox(height: 8),
                                 Center(
-                                  child: Text(
-                                    '0 years and 365 days',
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
-                                      fontSize: 13,
-                                      fontStyle: FontStyle.italic,
-                                      letterSpacing: 0.3,
-                                    ),
+                                  child: Builder(
+                                    builder: (context) {
+                                      final l10n = AppLocalizations.of(context);
+                                      if (l10n == null) {
+                                        return Text(
+                                          "0 years and 365 days",
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(0.5),
+                                            fontSize: 13,
+                                            fontStyle: FontStyle.italic,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        );
+                                      }
+                                      return Text(
+                                        l10n.yearsAndDays(0, 365),
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.5),
+                                          fontSize: 13,
+                                          fontStyle: FontStyle.italic,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
@@ -985,14 +1348,30 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   size: 20,
                                 ),
                                 SizedBox(width: 8),
-                                Text(
-                                  'Choose a Photo',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.8),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.3,
-                                  ),
+                                Builder(
+                                  builder: (context) {
+                                    final l10n = AppLocalizations.of(context);
+                                    if (l10n == null) {
+                                      return Text(
+                                        "Choose Photo",
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.8),
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      );
+                                    }
+                                    return Text(
+                                      l10n.choosePhoto,
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -1089,18 +1468,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                           letterSpacing: 0.3,
                         ),
                       ),
-                      if (!isPremium) ...[
-                        SizedBox(height: 16),
-                        Text(
-                          'Birthdate Plus',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ],
+                 
                     ],
                   ),
                 ),
@@ -1113,6 +1481,54 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   }
 
   Widget _buildTimeCounters() {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      if (_trackingMode == TrackingMode.TotalDays) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimeCard(_years.toString(), _years == 1 ? "Year" : "Years"),
+                _buildTimeCard(_months.toString(), _months == 1 ? "Month" : "Months"),
+                _buildTimeCard(_totalWeeks.toString(), _totalWeeks == 1 ? "Week" : "Weeks"),
+                _buildTimeCard(_remainingDays.toString(), _remainingDays == 1 ? "Day" : "Days"),
+              ],
+            ),
+          ],
+        );
+      } else if (_trackingMode == TrackingMode.Anniversary) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimeCard(_years < 10 ? '0${_years}' : _years.toString(), _years == 1 ? "Year" : "Years"),
+                _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? "Month" : "Months"),
+                _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? "Day" : "Days"),
+              ],
+            ),
+          ],
+        );
+      } else {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? "Month" : "Months"),
+                _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? "Day" : "Days"),
+              ],
+            ),
+          ],
+        );
+      }
+    }
+
     if (_trackingMode == TrackingMode.TotalDays) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1120,10 +1536,10 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeCard(_years.toString(), _years == 1 ? 'Year' : 'Years'),
-              _buildTimeCard(_months.toString(), _months == 1 ? 'Month' : 'Months'),
-              _buildTimeCard(_totalWeeks.toString(), _totalWeeks == 1 ? 'Week' : 'Weeks'),
-              _buildTimeCard(_remainingDays.toString(), _remainingDays == 1 ? 'Day' : 'Days'),
+              _buildTimeCard(_years.toString(), _years == 1 ? l10n.years : l10n.years),
+              _buildTimeCard(_months.toString(), _months == 1 ? l10n.months : l10n.months),
+              _buildTimeCard(_totalWeeks.toString(), _totalWeeks == 1 ? l10n.week : l10n.weeks),
+              _buildTimeCard(_remainingDays.toString(), _remainingDays == 1 ? l10n.days : l10n.days),
             ],
           ),
         ],
@@ -1135,9 +1551,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeCard(_years < 10 ? '0${_years}' : _years.toString(), _years == 1 ? 'Year' : 'Years'),
-              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? 'Month' : 'Months'),
-              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? 'Day' : 'Days'),
+              _buildTimeCard(_years < 10 ? '0${_years}' : _years.toString(), _years == 1 ? l10n.years : l10n.years),
+              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
+              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
             ],
           ),
         ],
@@ -1149,8 +1565,8 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? 'Month' : 'Months'),
-              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? 'Day' : 'Days'),
+              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
+              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
             ],
           ),
         ],

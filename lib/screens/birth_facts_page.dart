@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
 
 class BirthFactsPage extends StatefulWidget {
@@ -86,6 +87,18 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Birth Facts'),
+        ),
+        body: Center(
+          child: Text('Birth Facts Page'),
+        ),
+      );
+    }
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -116,7 +129,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
                     ),
                     Expanded(
                       child: Text(
-                        'Birth Facts',
+                        l10n.birthFacts,
                         style: TextStyle(
                           color: isDarkMode ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
@@ -140,7 +153,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Date Picker Card
-                        _buildDatePickerCard(isDarkMode),
+                        _buildDatePickerCard(isDarkMode, l10n),
                         SizedBox(height: 30),
                         
                         // Facts Grid
@@ -155,28 +168,28 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
                             childAspectRatio: 0.85,
                             children: [
                               _buildFactCard(
-                                title: 'Zodiac Sign',
+                                title: l10n.zodiacAndMore,
                                 content: getZodiacSign(selectedDate),
                                 icon: Icons.auto_awesome,
                                 gradient: [Colors.purple, Colors.deepPurple],
                                 isDarkMode: isDarkMode,
                               ),
                               _buildFactCard(
-                                title: 'Birthstone',
+                                title: l10n.birthFacts,
                                 content: getBirthstone(selectedDate.month),
                                 icon: Icons.diamond,
                                 gradient: [Colors.blue, Colors.blueAccent],
                                 isDarkMode: isDarkMode,
                               ),
                               _buildFactCard(
-                                title: 'Your Age',
+                                title: l10n.currentAge,
                                 content: '${DateTime.now().year - selectedDate.year}',
                                 icon: Icons.cake,
                                 gradient: [Colors.orange, Colors.deepOrange],
                                 isDarkMode: isDarkMode,
                               ),
                               _buildFactCard(
-                                title: 'Born on',
+                                title: l10n.birthDate,
                                 content: _getDayOfWeek(selectedDate),
                                 icon: Icons.calendar_today,
                                 gradient: [Colors.teal, Colors.tealAccent],
@@ -197,7 +210,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
     );
   }
 
-  Widget _buildDatePickerCard(bool isDarkMode) {
+  Widget _buildDatePickerCard(bool isDarkMode, AppLocalizations l10n) {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -217,7 +230,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
       child: Column(
         children: [
           Text(
-            'Select Your Birthday',
+            l10n.birthDate,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

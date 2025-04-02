@@ -21,6 +21,7 @@ import '../widgets/birthday_info_panel.dart';
 import '../widgets/birthday_action_buttons.dart';
 import '../widgets/birthday_customization_modal.dart';
 import '../viewmodels/age_calculator_viewmodel.dart';
+import '../providers/language_provider.dart';
 
 class BirthdayPhotoCard extends StatefulWidget {
   @override
@@ -330,6 +331,52 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
             return BirthdayCustomizationModal(
               fontSize: _fontSize,
               opacity: _opacity,
+              textColor: _textColor,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              isBold: false,
+              isItalic: false,
+              hasShadow: false,
+              isPremium: false,
+              onTextColorChanged: (color) {
+                setModalState(() {
+                  setState(() {
+                    _textColor = color;
+                  });
+                });
+                _savePreferences();
+              },
+              onBackgroundColorChanged: (color) {
+                setModalState(() {
+                  setState(() {
+                    // Add background color state handling
+                  });
+                });
+                _savePreferences();
+              },
+              onBoldChanged: (value) {
+                setModalState(() {
+                  setState(() {
+                    // Add bold state handling
+                  });
+                });
+                _savePreferences();
+              },
+              onItalicChanged: (value) {
+                setModalState(() {
+                  setState(() {
+                    // Add italic state handling
+                  });
+                });
+                _savePreferences();
+              },
+              onShadowChanged: (value) {
+                setModalState(() {
+                  setState(() {
+                    // Add shadow state handling
+                  });
+                });
+                _savePreferences();
+              },
               onFontSizeChanged: (value) {
                 setModalState(() {
                   setState(() {
@@ -393,6 +440,33 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
+          appBar: BirthdayAppBar(
+            showDetailedTime: _showDetailedTime,
+            isObfuscated: _isObfuscated,
+            isInfoVisible: _isInfoVisible,
+            onTimeFormatToggle: _toggleTimeFormat,
+            onCustomize: () => _showCustomizationModal(),
+            onVisibilityToggle: _toggleInfoVisibility,
+            onObfuscateToggle: () {
+              setState(() {
+                _isObfuscated = !_isObfuscated;
+              });
+              _savePreferences();
+            },
+            onResetAll: _resetAll,
+          ),
+          body: _buildBody(),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody() {
     final viewModel = Provider.of<AgeCalculatorViewModel>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
@@ -400,152 +474,136 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
     final accentColor = isDarkMode ? Color(0xFFE0E0E0) : Color(0xFF333333);
     final overlayColor = isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3);
 
-    final ageText = date_utils.DateUtils.calculateAgeText(_selectedDate, _isObfuscated);
+    final ageText = _selectedDate != null 
+        ? date_utils.DateUtils.calculateAgeText(context, _selectedDate!)
+        : '';
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: BirthdayAppBar(
-        showDetailedTime: _showDetailedTime,
-        isObfuscated: _isObfuscated,
-        isInfoVisible: _isInfoVisible,
-        onTimeFormatToggle: _toggleTimeFormat,
-        onCustomize: () => _showCustomizationModal(),
-        onVisibilityToggle: _toggleInfoVisibility,
-        onObfuscateToggle: () {
-          setState(() {
-            _isObfuscated = !_isObfuscated;
-          });
-          _savePreferences();
+    return Container(
+      color: backgroundColor,
+      child: GestureDetector(
+        onTapDown: (details) {
+          if (!_isSavingMode) {
+            _toggleCakes();
+          }
         },
-        onResetAll: _resetAll,
-      ),
-      body: Container(
-        color: backgroundColor,
-        child: GestureDetector(
-          onTapDown: (details) {
-            if (!_isSavingMode) {
-              _toggleCakes();
-            }
-          },
-          child: Column(
-            children: [
-              Expanded(
-                child: RepaintBoundary(
-                  key: _globalKey,
-                  child: Stack(
-                    children: [
-                      _image != null
-                          ? FadeTransition(
-                              opacity: _fadeAnimation,
+        child: Column(
+          children: [
+            Expanded(
+              child: RepaintBoundary(
+                key: _globalKey,
+                child: Stack(
+                  children: [
+                    _image != null
+                        ? FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                            ),
+                          )
+                        : EmptyState(
+                            onPickImage: () => _pickImage(ImageSource.gallery),
+                            accentColor: accentColor,
+                          ),
+                    Positioned(
+                      bottom: 80,
+                      left: 20,
+                      right: 20,
+                      child: BirthdayInfoPanel(
+                        fontSize: _fontSize,
+                        textColor: _textColor,
+                        opacity: _opacity,
+                        showDetailedTime: _showDetailedTime,
+                        isInfoVisible: _isInfoVisible,
+                        selectedDate: _selectedDate,
+                        ageText: ageText,
+                      ),
+                    ),
+                    Positioned(
+                      top: 150,
+                      right: 20,
+                      child: FutureBuilder<bool>(
+                        future: PremiumService.isPremium(),
+                        builder: (context, snapshot) {
+                          final isPremium = snapshot.data ?? false;
+                          if (isPremium) return SizedBox.shrink();
+                          
+                          return FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: RotatedBox(
+                              quarterTurns: 1,
                               child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 20,
+                                ),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10),
-                                    ),
-                                  ],
+                                  color: overlayColor,
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: accentColor.withOpacity(0.2),
+                                    width: 1,
+                                  ),
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.file(
-                                    _image!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
+                                child: Text(
+                                  'Birthdate+',
+                                  style: TextStyle(
+                                    color: accentColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
                               ),
-                            )
-                          : EmptyState(
-                              onPickImage: () => _pickImage(ImageSource.gallery),
-                              accentColor: accentColor,
                             ),
-                      Positioned(
-                        bottom: 80,
-                        left: 20,
-                        right: 20,
-                        child: BirthdayInfoPanel(
-                          fontSize: _fontSize,
-                          textColor: _textColor,
-                          opacity: _opacity,
-                          showDetailedTime: _showDetailedTime,
-                          isInfoVisible: _isInfoVisible,
-                          selectedDate: _selectedDate,
-                          ageText: ageText,
-                        ),
+                          );
+                        },
                       ),
+                    ),
+                    if (!_isSavingMode)
                       Positioned(
-                        top: 150,
-                        right: 20,
-                        child: FutureBuilder<bool>(
-                          future: PremiumService.isPremium(),
-                          builder: (context, snapshot) {
-                            final isPremium = snapshot.data ?? false;
-                            if (isPremium) return SizedBox.shrink();
-                            
-                            return FadeTransition(
-                              opacity: _fadeAnimation,
-                              child: RotatedBox(
-                                quarterTurns: 1,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 20,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: overlayColor,
-                                    borderRadius: BorderRadius.circular(30),
-                                    border: Border.all(
-                                      color: accentColor.withOpacity(0.2),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Birthdate Plus',
-                                    style: TextStyle(
-                                      color: accentColor,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w300,
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      if (!_isSavingMode)
-                        Positioned(
-                          bottom: 20,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: BirthdayActionButtons(
-                              onPickImage: _pickImage,
-                              onSave: _saveImage,
-                              hasImage: _image != null,
-                              selectedDate: _selectedDate,
-                              onDateSelected: (date) {
-                                setState(() {
-                                  _selectedDate = date;
-                                });
-                                _savePreferences();
-                              },
-                            ),
+                        bottom: 20,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: BirthdayActionButtons(
+                            onPickImage: _pickImage,
+                            onSave: _saveImage,
+                            hasImage: _image != null,
+                            selectedDate: _selectedDate,
+                            onDateSelected: (date) {
+                              setState(() {
+                                _selectedDate = date;
+                              });
+                              _savePreferences();
+                            },
                           ),
                         ),
-                      if (_showCakes) ..._cakes.map((cake) => cake.build()),
-                    ],
-                  ),
+                      ),
+                    if (_showCakes) ..._cakes.map((cake) => cake.build()),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

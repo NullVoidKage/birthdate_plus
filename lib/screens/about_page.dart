@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('About'),
+        ),
+        body: Center(
+          child: Text('About Page'),
+        ),
+      );
+    }
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -21,7 +34,7 @@ class AboutPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'About Us',
+          l10n.aboutUs,
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -59,7 +72,7 @@ class AboutPage extends StatelessWidget {
               // App Name and Version
               Center(
                 child: Text(
-                  'Birthdate+',
+                  l10n.appTitle,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -82,7 +95,7 @@ class AboutPage extends StatelessWidget {
               
               // About Content
               Text(
-                'About Birthdate+',
+                l10n.aboutUs,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -93,7 +106,7 @@ class AboutPage extends StatelessWidget {
               SizedBox(height: 16),
               
               Text(
-                'Birthdate+ is your personal birthday companion app that helps you discover fascinating facts about your special day and create beautiful shareable cards. Our app combines historical events, zodiac information, and creative design to make your birthday celebrations even more memorable.',
+                l10n.aboutDescription,
                 style: TextStyle(
                   fontSize: 16,
                   height: 1.5,
@@ -104,7 +117,7 @@ class AboutPage extends StatelessWidget {
               SizedBox(height: 24),
               
               Text(
-                'Features',
+                l10n.features,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -116,22 +129,22 @@ class AboutPage extends StatelessWidget {
               
               _buildFeatureItem(
                 icon: Icons.photo_camera,
-                title: 'Custom Birthday Cards',
-                description: 'Create and share beautiful birthday cards with your photos and personalized messages.',
+                title: l10n.birthdayCards,
+                description: l10n.birthdayCardsDescription,
                 isDarkMode: isDarkMode,
               ),
               
               _buildFeatureItem(
                 icon: Icons.cake_outlined,
-                title: 'Anniversary Calculator',
-                description: 'Calculate your exact age and upcoming milestone birthdays.',
+                title: l10n.anniversaryCards,
+                description: l10n.anniversaryCardsDescription,
                 isDarkMode: isDarkMode,
               ),
               
               _buildFeatureItem(
                 icon: Icons.auto_awesome,
-                title: 'Birth Facts',
-                description: 'Discover your zodiac sign, birthstone, and interesting historical events from your birth date.',
+                title: l10n.birthFacts,
+                description: l10n.birthFactsDescription,
                 isDarkMode: isDarkMode,
               ),
               
@@ -140,7 +153,7 @@ class AboutPage extends StatelessWidget {
               // Contact Section
               Center(
                 child: Text(
-                  'Made with ❤️ for birthday celebrations',
+                  l10n.madeWithLove,
                   style: TextStyle(
                     fontSize: 16,
                     color: isDarkMode ? Colors.white70 : Colors.black54,

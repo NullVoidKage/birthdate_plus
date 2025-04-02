@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -33,9 +34,11 @@ class _ContactPageState extends State<ContactPage> {
       
       setState(() => _isSubmitting = false);
       
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Thank you for your message! We\'ll get back to you soon.'),
+          content: Text(AppLocalizations.of(context)!.messageSent),
           backgroundColor: Colors.green,
         ),
       );
@@ -50,9 +53,11 @@ class _ContactPageState extends State<ContactPage> {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not launch $url'),
+          content: Text(AppLocalizations.of(context)!.couldNotLaunch + url),
           backgroundColor: Colors.red,
         ),
       );
@@ -61,6 +66,19 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Contact'),
+        ),
+        body: Center(
+          child: Text('Contact Page'),
+        ),
+      );
+    }
+
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -76,7 +94,7 @@ class _ContactPageState extends State<ContactPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Contact Us',
+          l10n.contactUs,
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -87,262 +105,156 @@ class _ContactPageState extends State<ContactPage> {
         physics: BouncingScrollPhysics(),
         child: Padding(
           padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Get in Touch',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.getInTouch,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
-              ),
-              
-              SizedBox(height: 8),
-              
-              Text(
-                'Have questions or feedback? We\'d love to hear from you!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                
+                SizedBox(height: 8),
+                
+                Text(
+                  l10n.contactDescription,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDarkMode ? Colors.white70 : Colors.black54,
+                  ),
                 ),
-              ),
-              
-              SizedBox(height: 40),
-              
-              // Contact Form
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    _buildTextField(
-                      controller: _nameController,
-                      label: 'Name',
-                      hint: 'Enter your name',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
-                      isDarkMode: isDarkMode,
+                
+                SizedBox(height: 32),
+                
+                // Name Field
+                TextFormField(
+                  controller: _nameController,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: l10n.name,
+                    hintText: l10n.enterName,
+                    labelStyle: TextStyle(
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
                     ),
-                    
-                    SizedBox(height: 16),
-                    
-                    _buildTextField(
-                      controller: _emailController,
-                      label: 'Email',
-                      hint: 'Enter your email',
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                      isDarkMode: isDarkMode,
-                    ),
-                    
-                    SizedBox(height: 16),
-                    
-                    _buildTextField(
-                      controller: _messageController,
-                      label: 'Message',
-                      hint: 'Enter your message',
-                      maxLines: 5,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your message';
-                        }
-                        return null;
-                      },
-                      isDarkMode: isDarkMode,
-                    ),
-                    
-                    SizedBox(height: 24),
-                    
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _isSubmitting ? null : _submitForm,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: _isSubmitting
-                            ? CircularProgressIndicator(color: Colors.white)
-                            : Text(
-                                'Send Message',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white24 : Colors.black26,
                       ),
                     ),
-                  ],
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l10n.pleaseEnterName;
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              
-              SizedBox(height: 40),
-              
-              // Additional Contact Information
-              Text(
-                'Other Ways to Reach Us',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-              ),
-              
-              SizedBox(height: 16),
-              
-              _buildContactOption(
-                icon: Icons.email,
-                title: 'Email',
-                subtitle: 'support@birthdateplus.app',
-                onTap: () => _launchUrl('mailto:support@birthdateplus.app'),
-                isDarkMode: isDarkMode,
-              ),
-              
-              _buildContactOption(
-                icon: Icons.web,
-                title: 'Website',
-                subtitle: 'www.birthdateplus.app',
-                onTap: () => _launchUrl('https://www.birthdateplus.app'),
-                isDarkMode: isDarkMode,
-              ),
-              
-              _buildContactOption(
-                icon: Icons.support_agent,
-                title: 'Support Hours',
-                subtitle: 'Monday - Friday, 9am - 5pm EST',
-                isDarkMode: isDarkMode,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required String? Function(String?) validator,
-    required bool isDarkMode,
-    TextInputType? keyboardType,
-    int? maxLines,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines ?? 1,
-      validator: validator,
-      style: TextStyle(
-        color: isDarkMode ? Colors.white : Colors.black,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        labelStyle: TextStyle(
-          color: isDarkMode ? Colors.white70 : Colors.black54,
-        ),
-        hintStyle: TextStyle(
-          color: isDarkMode ? Colors.white38 : Colors.black38,
-        ),
-        filled: true,
-        fillColor: isDarkMode ? Color(0xFF2C2C2C) : Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: isDarkMode ? Colors.white24 : Colors.black12,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.orange,
-            width: 2,
-          ),
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildContactOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool isDarkMode,
-    VoidCallback? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        margin: EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: isDarkMode ? Color(0xFF2C2C2C) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDarkMode ? Colors.white24 : Colors.black12,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.orange,
-                size: 24,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : Colors.black,
+                
+                SizedBox(height: 20),
+                
+                // Email Field
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: l10n.email,
+                    hintText: l10n.enterEmail,
+                    labelStyle: TextStyle(
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
+                    ),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white24 : Colors.black26,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    subtitle,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l10n.pleaseEnterEmail;
+                    }
+                    if (!value.contains('@')) {
+                      return l10n.enterValidEmail;
+                    }
+                    return null;
+                  },
+                ),
+                
+                SizedBox(height: 32),
+                
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: _isSubmitting
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            l10n.submit,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+                
+                SizedBox(height: 40),
+                
+                // Other Contact Methods
+                Text(
+                  l10n.otherWaysToReach,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                
+                SizedBox(height: 16),
+                
+                // Support Hours
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.access_time,
+                    color: Colors.orange,
+                  ),
+                  title: Text(
+                    l10n.supportHours,
                     style: TextStyle(
-                      fontSize: 14,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    l10n.supportHoursValue,
+                    style: TextStyle(
                       color: isDarkMode ? Colors.white70 : Colors.black54,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

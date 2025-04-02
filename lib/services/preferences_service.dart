@@ -80,4 +80,14 @@ class PreferencesService {
       print('Error clearing preferences: $e');
     }
   }
+
+  static Future<void> clearLanguagePreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('language_code');
+      print('Language preferences cleared successfully');
+    } catch (e) {
+      print('Error clearing language preferences: $e');
+    }
+  }
 } 

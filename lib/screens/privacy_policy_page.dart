@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Privacy Policy'),
+        ),
+        body: Center(
+          child: Text('Privacy Policy Page'),
+        ),
+      );
+    }
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -21,7 +34,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Privacy Policy',
+          l10n.privacyPolicy,
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -46,60 +59,32 @@ class PrivacyPolicyPage extends StatelessWidget {
               SizedBox(height: 24),
               
               _buildSection(
-                title: 'Introduction',
-                content: 'Birthdate+ is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.',
+                title: l10n.privacyPolicyIntroTitle,
+                content: l10n.privacyPolicyIntroContent,
                 isDarkMode: isDarkMode,
               ),
               
               _buildSection(
-                title: 'Information We Collect',
-                content: 'We collect the following types of information:\n\n'
-                    '• Birth date information that you voluntarily provide\n'
-                    '• Photos that you choose to include in birthday cards\n'
-                    '• Device information for app functionality\n'
-                    '• Usage statistics to improve our services',
+                title: l10n.dataCollectionTitle,
+                content: l10n.dataCollectionContent,
                 isDarkMode: isDarkMode,
               ),
               
               _buildSection(
-                title: 'How We Use Your Information',
-                content: 'We use the collected information to:\n\n'
-                    '• Generate birthday cards and facts\n'
-                    '• Improve app functionality\n'
-                    '• Provide personalized content\n'
-                    '• Enhance user experience',
+                title: l10n.dataSharingTitle,
+                content: l10n.dataSharingContent,
                 isDarkMode: isDarkMode,
               ),
               
               _buildSection(
-                title: 'Data Storage',
-                content: 'Your data is stored securely on our servers. We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.',
+                title: l10n.dataSecurityTitle,
+                content: l10n.dataSecurityContent,
                 isDarkMode: isDarkMode,
               ),
               
               _buildSection(
-                title: 'Third-Party Services',
-                content: 'We may use third-party services that collect information about you. These services are used for:\n\n'
-                    '• Analytics\n'
-                    '• Cloud storage\n'
-                    '• Social sharing features',
-                isDarkMode: isDarkMode,
-              ),
-              
-              _buildSection(
-                title: 'Your Rights',
-                content: 'You have the right to:\n\n'
-                    '• Access your personal data\n'
-                    '• Correct inaccurate data\n'
-                    '• Request deletion of your data\n'
-                    '• Opt-out of data collection',
-                isDarkMode: isDarkMode,
-              ),
-              
-              _buildSection(
-                title: 'Contact Us',
-                content: 'If you have any questions about this Privacy Policy, please contact us at:\n\n'
-                    'Email: privacy@birthdateplus.app',
+                title: l10n.contactTitle,
+                content: l10n.contactContent,
                 isDarkMode: isDarkMode,
               ),
               

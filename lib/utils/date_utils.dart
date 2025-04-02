@@ -1,46 +1,52 @@
 import 'package:intl/intl.dart';
+import 'package:birthdate_plus/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart';
 
 class DateUtils {
-  static String calculateAgeText(DateTime? birthDate, bool isObfuscated) {
-    if (birthDate == null) return '';
-    
-    final now = DateTime.now();
-    if (birthDate.isAfter(now)) return 'Invalid date';
-    
-    int years = now.year - birthDate.year;
-    int months = now.month - birthDate.month;
-    int days = now.day - birthDate.day;
-
-    // Adjust for negative days
-    if (days < 0) {
-      months--;
-      days += DateTime(now.year, now.month - 1, 0).day;
-    }
-
-    // Adjust for negative months
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
-
-    // Format the date
-    final dateFormatter = DateFormat('MMMM d, yyyy');
-    String formattedDate = dateFormatter.format(birthDate);
-
-    // Obfuscate the text if enabled
-    if (isObfuscated) {
-      formattedDate = formattedDate.replaceAll(RegExp(r'\d'), '*');
-    }
-
-    // Format the output
-    if (years == 0) {
-      if (months == 0) {
-        return '$days days old - $formattedDate';
+  static String calculateAgeText(BuildContext context, DateTime birthDate) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      final now = DateTime.now();
+      final age = now.year - birthDate.year;
+      final monthDiff = now.month - birthDate.month;
+      
+      if (monthDiff < 0 || (monthDiff == 0 && now.day < birthDate.day)) {
+        if (age == 0) {
+          return "Less than a year old";
+        }
+        return "${age - 1} years old";
       }
-      return '$months months, $days days - $formattedDate';
+      
+      if (age == 0) {
+        if (monthDiff == 0) {
+          return "Less than a month old";
+        }
+        return "$monthDiff months old";
+      }
+      
+      return "$age years old";
+    }
+
+    final now = DateTime.now();
+    final age = now.year - birthDate.year;
+    final monthDiff = now.month - birthDate.month;
+    
+    if (monthDiff < 0 || (monthDiff == 0 && now.day < birthDate.day)) {
+      if (age == 0) {
+        return "Less than a year old";
+      }
+      return "${age - 1} ${l10n.years} old";
     }
     
-    return '${isObfuscated ? '**' : years} y/o - $formattedDate';
+    if (age == 0) {
+      if (monthDiff == 0) {
+        return "Less than a month old";
+      }
+      return "$monthDiff ${l10n.months} old";
+    }
+    
+    return "$age ${l10n.years} old";
   }
 
   static Map<String, String> getDetailedTimeStats(DateTime birthDate) {
@@ -133,13 +139,25 @@ class DateUtils {
     return sum;
   }
 
-  static String getGeneration(int year) {
-    if (year >= 2025) return 'Generation Beta';  // Emerging generation
-    if (year >= 2010) return 'Generation Alpha';
-    if (year >= 1997) return 'Gen Z';
-    if (year >= 1981) return 'Millennial';
-    if (year >= 1965) return 'Gen X';
-    if (year >= 1946) return 'Baby Boomer';
-    return 'Silent Generation';
+  static String getGeneration(BuildContext context, int year) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      if (year >= 2025) return 'Generation Beta';
+      if (year >= 2010) return 'Generation Alpha';
+      if (year >= 1997) return 'Generation Z';
+      if (year >= 1981) return 'Generation Millennial';
+      if (year >= 1965) return 'Generation X';
+      if (year >= 1946) return 'Generation Baby Boomer';
+      return 'Generation Silent';
+    }
+    
+    if (year >= 2025) return l10n.generationBeta;
+    if (year >= 2010) return l10n.generationAlpha;
+    if (year >= 1997) return l10n.generationZ;
+    if (year >= 1981) return l10n.generationMillennial;
+    if (year >= 1965) return l10n.generationX;
+    if (year >= 1946) return l10n.generationBabyBoomer;
+    return l10n.generationSilent;
   }
 } 

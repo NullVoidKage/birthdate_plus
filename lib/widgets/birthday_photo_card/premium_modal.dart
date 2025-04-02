@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../services/premium_service.dart';
 import '../../services/in_app_purchase_service.dart';
 
@@ -73,6 +74,25 @@ class _PremiumModalState extends State<PremiumModal> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Fallback to English strings if localization is not available
+      return AlertDialog(
+        title: Text('Premium Features'),
+        content: Text('Unlock all premium features to enhance your experience.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: widget.onUpgrade,
+            child: Text('Upgrade'),
+          ),
+        ],
+      );
+    }
+
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Container(
@@ -98,7 +118,7 @@ class _PremiumModalState extends State<PremiumModal> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Upgrade to Premium',
+                  l10n.upgradeToPremium,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -122,22 +142,22 @@ class _PremiumModalState extends State<PremiumModal> {
                 children: [
                   _buildFeatureItem(
                     icon: Icons.remove_circle_outline,
-                    title: 'Remove Watermark',
-                    description: 'Share your photos without the Birthdate Plus watermark',
+                    title: l10n.removeWatermark,
+                    description: l10n.removeWatermarkDescription,
                     isDarkMode: isDarkMode,
                   ),
                   SizedBox(height: 24),
                   _buildFeatureItem(
                     icon: Icons.high_quality,
-                    title: 'High Quality Export',
-                    description: 'Export your photos in the highest quality for perfect sharing',
+                    title: l10n.highQualityExport,
+                    description: l10n.highQualityExportDescription,
                     isDarkMode: isDarkMode,
                   ),
                   SizedBox(height: 24),
                   _buildFeatureItem(
                     icon: Icons.block,
-                    title: 'Ad-Free Experience',
-                    description: 'Enjoy a clean, distraction-free interface',
+                    title: l10n.adFreeExperience,
+                    description: l10n.adFreeExperienceDescription,
                     isDarkMode: isDarkMode,
                   ),
                   SizedBox(height: 32),
@@ -176,7 +196,7 @@ class _PremiumModalState extends State<PremiumModal> {
                               ),
                             )
                           : Text(
-                              'Upgrade Now - \$2.99',
+                              l10n.upgradeNowWithPrice,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -193,7 +213,7 @@ class _PremiumModalState extends State<PremiumModal> {
                     child: TextButton(
                       onPressed: _isLoading ? null : () => _handleRestorePurchases(context),
                       child: Text(
-                        'Restore Purchases',
+                        l10n.restorePurchases,
                         style: TextStyle(
                           color: isDarkMode ? Colors.white70 : Colors.black54,
                         ),
