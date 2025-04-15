@@ -92,9 +92,9 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
       // Fallback to English strings if localization is not available
       return Scaffold(
         appBar: AppBar(
-          title: Text('Birth Facts'),
+          title: const Text('Birth Facts'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('Birth Facts Page'),
         ),
       );
@@ -108,8 +108,8 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDarkMode 
-              ? [Color(0xFF1A1A2E), Color(0xFF16213E)]
-              : [Color(0xFFF8F9FA), Color(0xFFE9ECEF)],
+              ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
+              : [const Color(0xFFF8F9FA), const Color(0xFFE9ECEF)],
           ),
         ),
         child: SafeArea(
@@ -117,7 +117,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
             children: [
               // App Bar
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 child: Row(
                   children: [
                     IconButton(
@@ -138,7 +138,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(width: 48), // Balance the back button
+                    const SizedBox(width: 48), // Balance the back button
                   ],
                 ),
               ),
@@ -146,22 +146,22 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
               // Content
               Expanded(
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Date Picker Card
                         _buildDatePickerCard(isDarkMode, l10n),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         
                         // Facts Grid
                         FadeTransition(
                           opacity: _fadeAnimation,
                           child: GridView.count(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             crossAxisCount: 2,
                             mainAxisSpacing: 20,
                             crossAxisSpacing: 20,
@@ -212,7 +212,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
 
   Widget _buildDatePickerCard(bool isDarkMode, AppLocalizations l10n) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black12 : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -220,7 +220,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
         border: Border.all(
@@ -237,7 +237,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
               color: isDarkMode ? Colors.white : Colors.black,
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           InkWell(
             onTap: _isAnimating ? null : () async {
               final DateTime? picked = await showDatePicker(
@@ -262,7 +262,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
               await _updateDate(picked);
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDarkMode 
@@ -281,7 +281,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
                     Icons.calendar_today,
                     color: isDarkMode ? Colors.white70 : Colors.black54,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
                     style: TextStyle(
@@ -307,7 +307,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
     required bool isDarkMode,
   }) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -325,7 +325,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -333,7 +333,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: gradient[0].withOpacity(0.2),
               borderRadius: BorderRadius.circular(15),
@@ -344,7 +344,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
               size: 30,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             title,
             style: TextStyle(
@@ -353,7 +353,7 @@ class _BirthFactsPageState extends State<BirthFactsPage> with SingleTickerProvid
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             content,
             style: TextStyle(

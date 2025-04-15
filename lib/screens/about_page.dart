@@ -12,9 +12,9 @@ class AboutPage extends StatelessWidget {
       // Fallback to English strings if localization is not available
       return Scaffold(
         appBar: AppBar(
-          title: Text('About'),
+          title: const Text('About'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('About Page'),
         ),
       );
@@ -22,7 +22,7 @@ class AboutPage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDarkMode ? Color(0xFF1A1A1A) : Color(0xFFFAFAFA),
+      backgroundColor: isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -42,9 +42,9 @@ class AboutPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -54,12 +54,12 @@ class AboutPage extends StatelessWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Colors.orange, Colors.deepOrange],
                     ),
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.cake,
                     size: 50,
                     color: Colors.white,
@@ -67,7 +67,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               
               // App Name and Version
               Center(
@@ -91,7 +91,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               
               // About Content
               Text(
@@ -103,7 +103,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               
               Text(
                 l10n.aboutDescription,
@@ -114,7 +114,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               
               Text(
                 l10n.features,
@@ -125,7 +125,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               
               _buildFeatureItem(
                 icon: Icons.photo_camera,
@@ -148,7 +148,7 @@ class AboutPage extends StatelessWidget {
                 isDarkMode: isDarkMode,
               ),
               
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               
               // Contact Section
               Center(
@@ -161,7 +161,7 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -176,12 +176,12 @@ class AboutPage extends StatelessWidget {
     required bool isDarkMode,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.orange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
@@ -192,7 +192,7 @@ class AboutPage extends StatelessWidget {
               size: 24,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,7 @@ class AboutPage extends StatelessWidget {
                     color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(

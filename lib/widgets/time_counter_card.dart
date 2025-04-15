@@ -15,7 +15,7 @@ class TimeCounterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: isHighlighted ? Colors.pink.withOpacity(0.2) : Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
@@ -29,7 +29,7 @@ class TimeCounterCard extends StatelessWidget {
         children: [
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -42,10 +42,10 @@ class TimeCounterCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               color: Colors.white70,
               fontWeight: FontWeight.w500,

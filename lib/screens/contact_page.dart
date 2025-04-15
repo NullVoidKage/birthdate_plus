@@ -30,7 +30,7 @@ class _ContactPageState extends State<ContactPage> {
       setState(() => _isSubmitting = true);
       
       // Simulate form submission
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       
       setState(() => _isSubmitting = false);
       
@@ -71,9 +71,9 @@ class _ContactPageState extends State<ContactPage> {
       // Fallback to English strings if localization is not available
       return Scaffold(
         appBar: AppBar(
-          title: Text('Contact'),
+          title: const Text('Contact'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('Contact Page'),
         ),
       );
@@ -82,7 +82,7 @@ class _ContactPageState extends State<ContactPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDarkMode ? Color(0xFF1A1A1A) : Color(0xFFFAFAFA),
+      backgroundColor: isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -102,9 +102,9 @@ class _ContactPageState extends State<ContactPage> {
         ),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
@@ -119,7 +119,7 @@ class _ContactPageState extends State<ContactPage> {
                   ),
                 ),
                 
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 
                 Text(
                   l10n.contactDescription,
@@ -129,7 +129,7 @@ class _ContactPageState extends State<ContactPage> {
                   ),
                 ),
                 
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 
                 // Name Field
                 TextFormField(
@@ -143,7 +143,7 @@ class _ContactPageState extends State<ContactPage> {
                     labelStyle: TextStyle(
                       color: isDarkMode ? Colors.white70 : Colors.black54,
                     ),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: isDarkMode ? Colors.white24 : Colors.black26,
@@ -158,7 +158,7 @@ class _ContactPageState extends State<ContactPage> {
                   },
                 ),
                 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 
                 // Email Field
                 TextFormField(
@@ -173,7 +173,7 @@ class _ContactPageState extends State<ContactPage> {
                     labelStyle: TextStyle(
                       color: isDarkMode ? Colors.white70 : Colors.black54,
                     ),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: isDarkMode ? Colors.white24 : Colors.black26,
@@ -191,7 +191,7 @@ class _ContactPageState extends State<ContactPage> {
                   },
                 ),
                 
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 
                 // Submit Button
                 SizedBox(
@@ -199,17 +199,17 @@ class _ContactPageState extends State<ContactPage> {
                   child: ElevatedButton(
                     onPressed: _isSubmitting ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Colors.orange,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: _isSubmitting
-                        ? CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             l10n.submit,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -217,7 +217,7 @@ class _ContactPageState extends State<ContactPage> {
                   ),
                 ),
                 
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 
                 // Other Contact Methods
                 Text(
@@ -229,12 +229,12 @@ class _ContactPageState extends State<ContactPage> {
                   ),
                 ),
                 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 
                 // Support Hours
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.access_time,
                     color: Colors.orange,
                   ),

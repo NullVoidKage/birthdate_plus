@@ -30,9 +30,9 @@ class InAppPurchaseService {
       await iosPlatformAddition.setDelegate(null);
     }
     
-    const Set<String> _kIds = <String>{_androidPremiumId, _iosPremiumId};
+    const Set<String> kIds = <String>{_androidPremiumId, _iosPremiumId};
     final ProductDetailsResponse productDetailsResponse =
-        await _inAppPurchase.queryProductDetails(_kIds);
+        await _inAppPurchase.queryProductDetails(kIds);
     
     if (productDetailsResponse.error != null) {
       print('Error loading products: ${productDetailsResponse.error}');

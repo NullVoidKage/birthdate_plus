@@ -18,8 +18,8 @@ class DateCalculator {
     DateTime temp = start;
     
     // Count completed years
-    while (temp.add(Duration(days: 365)).isBefore(end) || 
-           temp.add(Duration(days: 365)).isAtSameMomentAs(end)) {
+    while (temp.add(const Duration(days: 365)).isBefore(end) || 
+           temp.add(const Duration(days: 365)).isAtSameMomentAs(end)) {
       years++;
       temp = DateTime(temp.year + 1, temp.month, temp.day);
     }

@@ -152,5 +152,22 @@
     "generationMillennial": "मिलेनियल पीढ़ी",
     "generationX": "एक्स पीढ़ी",
     "generationBabyBoomer": "बेबी बूमर पीढ़ी",
-    "generationSilent": "साइलेंट पीढ़ी"
+    "generationSilent": "साइलेंट पीढ़ी",
+    "detailedTime": "विस्तृत समय",
+    "simpleTime": "सरल समय",
+    "showAge": "आयु दिखाएं",
+    "hideAge": "आयु छिपाएं",
+    "customize": "अनुकूलित करें",
+    "showInfo": "जानकारी दिखाएं",
+    "hideInfo": "जानकारी छिपाएं",
+    "resetAll": "सब रीसेट करें",
+    "upgradeToPremium": "प्रीमियम में अपग्रेड करें",
+    "removeWatermark": "वॉटरमार्क हटाएं",
+    "removeWatermarkDescription": "Birthdate Plus वॉटरमार्क के बिना फोटो शेयर करें",
+    "highQualityExport": "उच्च गुणवत्ता निर्यात",
+    "highQualityExportDescription": "सर्वश्रेष्ठ शेयरिंग के लिए उच्चतम गुणवत्ता में फोटो निर्यात करें",
+    "adFreeExperience": "विज्ञापन मुक्त अनुभव",
+    "adFreeExperienceDescription": "साफ, बाधा रहित इंटरफेस",
+    "upgradeNowWithPrice": "अभी अपग्रेड करें - ₹249",
+    "restorePurchases": "खरीदारी पुनर्स्थापित करें"
 } 

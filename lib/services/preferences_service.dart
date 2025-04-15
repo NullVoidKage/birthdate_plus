@@ -21,10 +21,15 @@ class PreferencesService {
       
       // Save selected date
       if (selectedDate != null) {
-        await prefs.setString('selectedDate', selectedDate.toIso8601String());
+        final dateString = selectedDate.toIso8601String();
+        await prefs.setString('selectedDate', dateString);
+        print('Saved date to preferences: $dateString');
+      } else {
+        await prefs.remove('selectedDate');
+        print('Removed date from preferences');
       }
       
-      print('Preferences saved successfully: fontSize=$fontSize, opacity=$opacity, date=${selectedDate?.toIso8601String()}');
+      print('Preferences saved successfully: fontSize=$fontSize, opacity=$opacity');
     } catch (e) {
       print('Error saving preferences: $e');
     }
@@ -41,16 +46,25 @@ class PreferencesService {
       final savedIsInfoVisible = prefs.getBool('isInfoVisible');
       final savedIsObfuscated = prefs.getBool('isObfuscated');
       
-      // Load selected date
-      final savedDateString = prefs.getString('selectedDate');
+      // Load selected date with proper error handling
       DateTime? selectedDate;
-      if (savedDateString != null) {
-        selectedDate = DateTime.parse(savedDateString);
+      try {
+        final savedDateString = prefs.getString('selectedDate');
+        print('Loaded date string from preferences: $savedDateString');
+        
+        if (savedDateString != null && savedDateString.isNotEmpty) {
+          selectedDate = DateTime.parse(savedDateString);
+          print('Successfully parsed date: ${selectedDate.toIso8601String()}');
+        } else {
+          print('No saved date found in preferences');
+        }
+      } catch (e) {
+        print('Error parsing saved date: $e');
+        // If there's an error parsing the date, remove the invalid value
+        await prefs.remove('selectedDate');
       }
 
-      print('Preferences loaded successfully: fontSize=$savedFontSize, opacity=$savedOpacity, date=${selectedDate?.toIso8601String()}');
-      
-      return {
+      final result = {
         'fontSize': savedFontSize ?? 18.0,
         'opacity': savedOpacity ?? 0.7,
         'showDetailedTime': savedShowDetailedTime ?? false,
@@ -58,6 +72,9 @@ class PreferencesService {
         'isObfuscated': savedIsObfuscated ?? false,
         'selectedDate': selectedDate,
       };
+      
+      print('Loaded preferences: $result');
+      return result;
     } catch (e) {
       print('Error loading preferences: $e');
       return {
@@ -74,8 +91,27 @@ class PreferencesService {
   static Future<void> clearAllPreferences() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      
+      // Save the current language setting and date
+      final languageCode = prefs.getString('language_code');
+      final savedDateString = prefs.getString('selectedDate');
+      
+      // Clear all preferences
       await prefs.clear();
-      print('All preferences cleared successfully');
+      
+      // Restore the language setting if it existed
+      if (languageCode != null) {
+        await prefs.setString('language_code', languageCode);
+        print('Language preference preserved: $languageCode');
+      }
+      
+      // Restore the date if it existed
+      if (savedDateString != null) {
+        await prefs.setString('selectedDate', savedDateString);
+        print('Date preference preserved: $savedDateString');
+      }
+      
+      print('All preferences cleared successfully (except language and date)');
     } catch (e) {
       print('Error clearing preferences: $e');
     }

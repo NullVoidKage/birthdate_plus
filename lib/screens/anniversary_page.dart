@@ -23,6 +23,8 @@ import '../widgets/relationship_stats.dart';
 enum TrackingMode { Anniversary, Monthsary, TotalDays, Statistics }
 
 class AnniversaryPage extends StatefulWidget {
+  const AnniversaryPage({super.key});
+
   @override
   _AnniversaryPageState createState() => _AnniversaryPageState();
 }
@@ -52,15 +54,15 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   int _remainingDays = 0;
 
   // Text style customization
-  Color _textColor = Colors.white;
-  double _fontSize = 18.0;
-  double _opacity = 0.2;
+  final Color _textColor = Colors.white;
+  final double _fontSize = 18.0;
+  final double _opacity = 0.2;
 
   // Tracking mode
   TrackingMode _trackingMode = TrackingMode.Anniversary;
 
   // Heart animation variables
-  List<HeartAnimation> _hearts = [];
+  final List<HeartAnimation> _hearts = [];
   Timer? _heartTimer;
   bool _showHearts = false;
 
@@ -88,7 +90,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     _startTimer();
 
     // Start heart animation timer
-    _heartTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _heartTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (_showHearts && mounted) {
         setState(() {
           _updateHearts();
@@ -150,7 +152,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         _calculateDuration();
       }
@@ -235,7 +237,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         
         if (!adCompleted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Please watch the ad to save your anniversary card'),
               backgroundColor: Colors.red,
             ),
@@ -252,7 +254,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       print('Starting save process...');
 
       // Short delay to ensure UI updates before capture
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Get the RenderRepaintBoundary object
       RenderRepaintBoundary boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -318,7 +320,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                   color: isDarkMode ? Colors.white70 : Colors.black87,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
                 height: 200,
                 width: 200,
@@ -420,7 +422,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         
         if (!adCompleted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Please watch the ad to share your anniversary card'),
               backgroundColor: Colors.red,
             ),
@@ -434,7 +436,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       });
 
       // Short delay to ensure UI updates
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       final boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 3.0);
@@ -456,9 +458,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       await file.writeAsBytes(pngBytes);
 
       // Share with custom message
-      String message = 'Celebrating ${_years} years';
+      String message = 'Celebrating $_years years';
       if (_years == 0) {
-        message = 'Celebrating ${_months} months and ${_days} days';
+        message = 'Celebrating $_months months and $_days days';
       }
       message += ' of love! 💑\n#CoupleGoals #Love #Anniversary';
       
@@ -527,7 +529,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                     ),
                   ),
                 ),
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(20),
                   ),
@@ -541,7 +543,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                         blurRadius: 3.0,
                         color: Colors.black.withOpacity(0.3),
                       ),
@@ -549,26 +551,26 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                   ),
                 ),
                 leading: Container(
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back_ios_new_rounded),
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
                     onPressed: () => Navigator.of(context).pop(),
                     color: Colors.white,
                   ),
                 ),
                 actions: [
                   Container(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.menu_rounded, color: Colors.white),
+                      icon: const Icon(Icons.menu_rounded, color: Colors.white),
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
@@ -576,7 +578,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                           builder: (context) => Container(
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.9),
-                              borderRadius: BorderRadius.vertical(
+                              borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(20),
                               ),
                             ),
@@ -625,11 +627,11 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   height: 1,
                                 ),
                                 ListTile(
-                                  leading: Icon(
+                                  leading: const Icon(
                                     Icons.refresh_rounded,
                                     color: Colors.white70,
                                   ),
-                                  title: Text(
+                                  title: const Text(
                                     "Settings",
                                     style: TextStyle(
                                       color: Colors.white70,
@@ -642,11 +644,11 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                       builder: (BuildContext context) {
                                         return AlertDialog(
                                           backgroundColor: Colors.grey[850],
-                                          title: Text(
+                                          title: const Text(
                                             "Settings",
                                             style: TextStyle(color: Colors.white),
                                           ),
-                                          content: Text(
+                                          content: const Text(
                                             "Discover Facts",
                                             style: TextStyle(color: Colors.white70),
                                           ),
@@ -655,7 +657,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              child: Text(
+                                              child: const Text(
                                                 "Settings",
                                                 style: TextStyle(color: Colors.white70),
                                               ),
@@ -690,7 +692,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                       },
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                 ],
               ),
         body: GestureDetector(
@@ -729,7 +731,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                               future: PremiumService.isPremium(),
                               builder: (context, snapshot) {
                                 final isPremium = snapshot.data ?? false;
-                                if (isPremium) return SizedBox.shrink();
+                                if (isPremium) return const SizedBox.shrink();
                                 
                                 return Positioned(
                                   top: 150,
@@ -737,7 +739,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   child: RotatedBox(
                                     quarterTurns: 1,
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                         vertical: 12,
                                         horizontal: 20,
                                       ),
@@ -749,7 +751,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                           width: 1,
                                         ),
                                       ),
-                                      child: Text(
+                                      child: const Text(
                                         "Birthdate Plus",
                                         style: TextStyle(
                                           color: Colors.white,
@@ -779,19 +781,19 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.calendar_today, color: Colors.white),
+                          icon: const Icon(Icons.calendar_today, color: Colors.white),
                           onPressed: _pickDate,
                         ),
                         IconButton(
-                          icon: Icon(Icons.camera_alt, color: Colors.white),
+                          icon: const Icon(Icons.camera_alt, color: Colors.white),
                           onPressed: () => pickImage(ImageSource.camera),
                         ),
                         IconButton(
-                          icon: Icon(Icons.photo_library, color: Colors.white),
+                          icon: const Icon(Icons.photo_library, color: Colors.white),
                           onPressed: () => pickImage(ImageSource.gallery),
                         ),
                         IconButton(
-                          icon: Icon(Icons.share, color: Colors.white),
+                          icon: const Icon(Icons.share, color: Colors.white),
                           onPressed: _shareWithTemplate,
                         ),
                       ],
@@ -838,7 +840,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                   ),
                 ),
               ),
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(20),
                 ),
@@ -852,7 +854,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                   color: Colors.white,
                   shadows: [
                     Shadow(
-                      offset: Offset(0, 1),
+                      offset: const Offset(0, 1),
                       blurRadius: 3.0,
                       color: Colors.black.withOpacity(0.3),
                     ),
@@ -860,26 +862,26 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                 ),
               ),
               leading: Container(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
                   onPressed: () => Navigator.of(context).pop(),
                   color: Colors.white,
                 ),
               ),
               actions: [
                 Container(
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.menu_rounded, color: Colors.white),
+                    icon: const Icon(Icons.menu_rounded, color: Colors.white),
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
@@ -887,7 +889,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                         builder: (context) => Container(
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.9),
-                            borderRadius: BorderRadius.vertical(
+                            borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(20),
                             ),
                           ),
@@ -936,13 +938,13 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                 height: 1,
                               ),
                               ListTile(
-                                leading: Icon(
+                                leading: const Icon(
                                   Icons.refresh_rounded,
                                   color: Colors.white70,
                                 ),
                                 title: Text(
                                   l10n.settings,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white70,
                                   ),
                                 ),
@@ -955,11 +957,11 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                         backgroundColor: Colors.grey[850],
                                         title: Text(
                                           l10n.settings,
-                                          style: TextStyle(color: Colors.white),
+                                          style: const TextStyle(color: Colors.white),
                                         ),
                                         content: Text(
                                           l10n.discoverFacts,
-                                          style: TextStyle(color: Colors.white70),
+                                          style: const TextStyle(color: Colors.white70),
                                         ),
                                         actions: [
                                           TextButton(
@@ -968,7 +970,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                             },
                                             child: Text(
                                               l10n.settings,
-                                              style: TextStyle(color: Colors.white70),
+                                              style: const TextStyle(color: Colors.white70),
                                             ),
                                           ),
                                           TextButton(
@@ -1001,7 +1003,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                     },
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
               ],
             ),
       body: GestureDetector(
@@ -1040,7 +1042,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                             future: PremiumService.isPremium(),
                             builder: (context, snapshot) {
                               final isPremium = snapshot.data ?? false;
-                              if (isPremium) return SizedBox.shrink();
+                              if (isPremium) return const SizedBox.shrink();
                               
                               return Positioned(
                                 top: 150,
@@ -1048,7 +1050,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                 child: RotatedBox(
                                   quarterTurns: 1,
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       vertical: 12,
                                       horizontal: 20,
                                     ),
@@ -1062,7 +1064,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                     ),
                                     child: Text(
                                       l10n.appTitle,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,
@@ -1090,19 +1092,19 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.calendar_today, color: Colors.white),
+                        icon: const Icon(Icons.calendar_today, color: Colors.white),
                         onPressed: _pickDate,
                       ),
                       IconButton(
-                        icon: Icon(Icons.camera_alt, color: Colors.white),
+                        icon: const Icon(Icons.camera_alt, color: Colors.white),
                         onPressed: () => pickImage(ImageSource.camera),
                       ),
                       IconButton(
-                        icon: Icon(Icons.photo_library, color: Colors.white),
+                        icon: const Icon(Icons.photo_library, color: Colors.white),
                         onPressed: () => pickImage(ImageSource.gallery),
                       ),
                       IconButton(
-                        icon: Icon(Icons.share, color: Colors.white),
+                        icon: const Icon(Icons.share, color: Colors.white),
                         onPressed: _shareWithTemplate,
                       ),
                     ],
@@ -1119,7 +1121,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     return image != null
         ? FadeTransition(
             opacity: _fadeAnimation,
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               height: double.infinity,
               child: Image.file(
@@ -1129,7 +1131,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                   print('Error loading image: $error');
                   return Container(
                     color: Colors.grey[800]!.withOpacity(0.5),
-                    child: Icon(Icons.error_outline, color: Colors.white),
+                    child: const Icon(Icons.error_outline, color: Colors.white),
                   );
                 },
               ),
@@ -1138,7 +1140,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         : Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -1151,15 +1153,15 @@ class _AnniversaryPageState extends State<AnniversaryPage>
             child: SafeArea(
               child: Column(
                 children: [
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            margin: EdgeInsets.fromLTRB(32, 16, 32, 0),
-                            padding: EdgeInsets.all(32),
+                            margin: const EdgeInsets.fromLTRB(32, 16, 32, 0),
+                            padding: const EdgeInsets.all(32),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.05),
                               borderRadius: BorderRadius.circular(24),
@@ -1188,7 +1190,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                     color: Colors.white.withOpacity(0.8),
                                   ),
                                 ),
-                                SizedBox(height: 24),
+                                const SizedBox(height: 24),
                                 Builder(
                                   builder: (context) {
                                     final l10n = AppLocalizations.of(context);
@@ -1204,7 +1206,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                               letterSpacing: 0.2,
                                             ),
                                           ),
-                                          SizedBox(height: 12),
+                                          const SizedBox(height: 12),
                                           Text(
                                             "Add photos to create beautiful anniversary cards",
                                             textAlign: TextAlign.center,
@@ -1230,7 +1232,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                             letterSpacing: 0.2,
                                           ),
                                         ),
-                                        SizedBox(height: 12),
+                                        const SizedBox(height: 12),
                                         Text(
                                           l10n.addPhotosDescription,
                                           textAlign: TextAlign.center,
@@ -1249,9 +1251,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                               ],
                             ),
                           ),
-                          SizedBox(height: 24),
+                          const SizedBox(height: 24),
                           Container(
-                            margin: EdgeInsets.symmetric(horizontal: 32),
+                            margin: const EdgeInsets.symmetric(horizontal: 32),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -1266,9 +1268,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                     letterSpacing: 0.3,
                                   ),
                                 ),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 Container(
-                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.05),
                                     borderRadius: BorderRadius.circular(20),
@@ -1286,7 +1288,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Center(
                                   child: Builder(
                                     builder: (context) {
@@ -1322,7 +1324,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(32, 16, 32, 32),
+                    padding: const EdgeInsets.fromLTRB(32, 16, 32, 32),
                     child: Container(
                       height: 48,
                       decoration: BoxDecoration(
@@ -1347,7 +1349,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                                   color: Colors.white.withOpacity(0.8),
                                   size: 20,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Builder(
                                   builder: (context) {
                                     final l10n = AppLocalizations.of(context);
@@ -1420,14 +1422,14 @@ class _AnniversaryPageState extends State<AnniversaryPage>
         builder: (context, snapshot) {
           final isPremium = snapshot.data ?? false;
           return AnimatedOpacity(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             opacity: 0.9,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(24),
@@ -1449,7 +1451,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                           letterSpacing: 0.5,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       if (_trackingMode == TrackingMode.Statistics && _anniversaryDate != null)
                         RelationshipStats(
                           anniversaryDate: _anniversaryDate!,
@@ -1457,7 +1459,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
                         )
                       else
                         _buildTimeCounters(),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         dateComparisonText,
                         style: TextStyle(
@@ -1506,9 +1508,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTimeCard(_years < 10 ? '0${_years}' : _years.toString(), _years == 1 ? "Year" : "Years"),
-                _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? "Month" : "Months"),
-                _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? "Day" : "Days"),
+                _buildTimeCard(_years < 10 ? '0$_years' : _years.toString(), _years == 1 ? "Year" : "Years"),
+                _buildTimeCard(_months < 10 ? '0$_months' : _months.toString(), _months == 1 ? "Month" : "Months"),
+                _buildTimeCard(_days < 10 ? '0$_days' : _days.toString(), _days == 1 ? "Day" : "Days"),
               ],
             ),
           ],
@@ -1520,8 +1522,8 @@ class _AnniversaryPageState extends State<AnniversaryPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? "Month" : "Months"),
-                _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? "Day" : "Days"),
+                _buildTimeCard(_months < 10 ? '0$_months' : _months.toString(), _months == 1 ? "Month" : "Months"),
+                _buildTimeCard(_days < 10 ? '0$_days' : _days.toString(), _days == 1 ? "Day" : "Days"),
               ],
             ),
           ],
@@ -1551,9 +1553,9 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeCard(_years < 10 ? '0${_years}' : _years.toString(), _years == 1 ? l10n.years : l10n.years),
-              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
-              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
+              _buildTimeCard(_years < 10 ? '0$_years' : _years.toString(), _years == 1 ? l10n.years : l10n.years),
+              _buildTimeCard(_months < 10 ? '0$_months' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
+              _buildTimeCard(_days < 10 ? '0$_days' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
             ],
           ),
         ],
@@ -1565,8 +1567,8 @@ class _AnniversaryPageState extends State<AnniversaryPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeCard(_months < 10 ? '0${_months}' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
-              _buildTimeCard(_days < 10 ? '0${_days}' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
+              _buildTimeCard(_months < 10 ? '0$_months' : _months.toString(), _months == 1 ? l10n.months : l10n.months),
+              _buildTimeCard(_days < 10 ? '0$_days' : _days.toString(), _days == 1 ? l10n.days : l10n.days),
             ],
           ),
         ],
@@ -1580,7 +1582,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.2),
             borderRadius: BorderRadius.circular(16),
@@ -1594,14 +1596,14 @@ class _AnniversaryPageState extends State<AnniversaryPage>
             children: [
               Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
@@ -1624,14 +1626,14 @@ class _AnniversaryPageState extends State<AnniversaryPage>
       children: [
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
@@ -1645,6 +1647,7 @@ class _AnniversaryPageState extends State<AnniversaryPage>
     );
   }
 
+  @override
   Future<void> pickImage(ImageSource source) async {
     try {
       final ImagePicker picker = ImagePicker();

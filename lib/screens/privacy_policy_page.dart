@@ -12,9 +12,9 @@ class PrivacyPolicyPage extends StatelessWidget {
       // Fallback to English strings if localization is not available
       return Scaffold(
         appBar: AppBar(
-          title: Text('Privacy Policy'),
+          title: const Text('Privacy Policy'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('Privacy Policy Page'),
         ),
       );
@@ -22,7 +22,7 @@ class PrivacyPolicyPage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDarkMode ? Color(0xFF1A1A1A) : Color(0xFFFAFAFA),
+      backgroundColor: isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -42,9 +42,9 @@ class PrivacyPolicyPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -56,7 +56,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               
               _buildSection(
                 title: l10n.privacyPolicyIntroTitle,
@@ -88,7 +88,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 isDarkMode: isDarkMode,
               ),
               
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -102,7 +102,7 @@ class PrivacyPolicyPage extends StatelessWidget {
     required bool isDarkMode,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -114,7 +114,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               color: isDarkMode ? Colors.white : Colors.black,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             content,
             style: TextStyle(

@@ -141,5 +141,22 @@
     "generationMillennial": "千禧世代",
     "generationX": "X世代",
     "generationBabyBoomer": "婴儿潮世代",
-    "generationSilent": "沉默世代"
+    "generationSilent": "沉默世代",
+    "detailedTime": "详细时间",
+    "simpleTime": "简单时间",
+    "showAge": "显示年龄",
+    "hideAge": "隐藏年龄",
+    "customize": "自定义",
+    "showInfo": "显示信息",
+    "hideInfo": "隐藏信息",
+    "resetAll": "全部重置",
+    "upgradeToPremium": "升级至高级版",
+    "removeWatermark": "移除水印",
+    "removeWatermarkDescription": "分享照片时无需显示 Birthdate Plus 水印",
+    "highQualityExport": "高质量导出",
+    "highQualityExportDescription": "以最高质量导出照片以完美分享",
+    "adFreeExperience": "无广告体验",
+    "adFreeExperienceDescription": "清爽无干扰的界面",
+    "upgradeNowWithPrice": "立即升级 - ¥19.99",
+    "restorePurchases": "恢复购买"
 } 

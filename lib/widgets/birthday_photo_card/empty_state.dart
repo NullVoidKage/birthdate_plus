@@ -29,7 +29,7 @@ class EmptyState extends StatelessWidget {
                   size: 64,
                   color: Colors.grey[400],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Birthday Cards',
                   style: TextStyle(
@@ -38,7 +38,7 @@ class EmptyState extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Add your first birthday card to get started',
                   style: TextStyle(
@@ -60,7 +60,7 @@ class EmptyState extends StatelessWidget {
                 size: 64,
                 color: Colors.grey[400],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 l10n.birthdayCards,
                 style: TextStyle(
@@ -69,7 +69,7 @@ class EmptyState extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 l10n.addPhoto,
                 style: TextStyle(

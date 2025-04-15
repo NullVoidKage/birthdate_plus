@@ -26,10 +26,10 @@ class RelationshipStats extends StatelessWidget {
         _buildStatRow('Total Weeks', totalWeeks.toString()),
         _buildStatRow('Total Months', totalMonths.toString()),
         _buildStatRow('Total Years', totalYears.toString()),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           DateCalculator.getTimeAgo(anniversaryDate),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white70,
             fontSize: 12,
             fontStyle: FontStyle.italic,
@@ -47,14 +47,14 @@ class RelationshipStats extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white70,
               fontSize: 14,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.w600,

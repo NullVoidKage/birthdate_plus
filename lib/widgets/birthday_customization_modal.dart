@@ -43,7 +43,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
 
   Widget _buildPremiumBadge(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.purple.shade300, Colors.purple.shade700],
@@ -52,7 +52,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.star, color: Colors.white, size: 16),
@@ -97,7 +97,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a color'),
+          title: const Text('Pick a color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: currentColor,
@@ -107,7 +107,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Done'),
+              child: const Text('Done'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -127,7 +127,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: modalBackgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -135,7 +135,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
           children: [
             // Drag handle
             Container(
-              margin: EdgeInsets.symmetric(vertical: 12),
+              margin: const EdgeInsets.symmetric(vertical: 12),
               width: 40,
               height: 4,
               decoration: BoxDecoration(
@@ -145,7 +145,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
             ),
             // Header with close button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -164,16 +164,16 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
+                    constraints: const BoxConstraints(),
                     splashRadius: 24,
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             // Basic Features Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -185,7 +185,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       color: modalTextColor,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Font Size Slider
                   Text(
                     'Font Size',
@@ -194,7 +194,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       color: modalTextColor,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: Colors.purple,
@@ -203,8 +203,8 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       overlayColor: Colors.purple.withOpacity(0.1),
                       valueIndicatorColor: Colors.purple,
                       trackHeight: 4,
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 24),
-                      thumbShape: RoundSliderThumbShape(
+                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                      thumbShape: const RoundSliderThumbShape(
                         enabledThumbRadius: 12,
                         pressedElevation: 8,
                       ),
@@ -218,7 +218,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       onChanged: onFontSizeChanged,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   // Opacity Slider
                   Text(
                     'Text Opacity',
@@ -227,7 +227,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       color: modalTextColor,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: Colors.purple,
@@ -236,8 +236,8 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       overlayColor: Colors.purple.withOpacity(0.1),
                       valueIndicatorColor: Colors.purple,
                       trackHeight: 4,
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 24),
-                      thumbShape: RoundSliderThumbShape(
+                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                      thumbShape: const RoundSliderThumbShape(
                         enabledThumbRadius: 12,
                         pressedElevation: 8,
                       ),
@@ -254,10 +254,10 @@ class BirthdayCustomizationModal extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             // Premium Features Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -271,11 +271,11 @@ class BirthdayCustomizationModal extends StatelessWidget {
                           color: modalTextColor,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       _buildPremiumBadge(context),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Text Color Selection
                   _buildPremiumFeature(
                     context,
@@ -289,7 +289,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                             color: modalTextColor,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         InkWell(
                           onTap: () => _showColorPicker(context, textColor, onTextColorChanged),
                           child: Container(
@@ -304,7 +304,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   // Background Color Selection
                   _buildPremiumFeature(
                     context,
@@ -318,7 +318,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                             color: modalTextColor,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         InkWell(
                           onTap: () => _showColorPicker(context, backgroundColor, onBackgroundColorChanged),
                           child: Container(
@@ -333,7 +333,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   // Text Style Options
                   _buildPremiumFeature(
                     context,
@@ -347,7 +347,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                             color: modalTextColor,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Container(
                           decoration: BoxDecoration(
                             color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
@@ -356,13 +356,13 @@ class BirthdayCustomizationModal extends StatelessWidget {
                           child: Column(
                             children: [
                               SwitchListTile(
-                                title: Text('Bold'),
+                                title: const Text('Bold'),
                                 value: isBold,
                                 onChanged: onBoldChanged,
                               ),
-                              Divider(height: 1),
+                              const Divider(height: 1),
                               SwitchListTile(
-                                title: Text('Italic'),
+                                title: const Text('Italic'),
                                 value: isItalic,
                                 onChanged: onItalicChanged,
                               ),
@@ -372,7 +372,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   // Text Shadow Toggle
                   _buildPremiumFeature(
                     context,
@@ -386,14 +386,14 @@ class BirthdayCustomizationModal extends StatelessWidget {
                             color: modalTextColor,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Container(
                           decoration: BoxDecoration(
                             color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: SwitchListTile(
-                            title: Text('Text Shadow'),
+                            title: const Text('Text Shadow'),
                             value: hasShadow,
                             onChanged: onShadowChanged,
                           ),
@@ -404,7 +404,7 @@ class BirthdayCustomizationModal extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
           ],
         ),
       ),

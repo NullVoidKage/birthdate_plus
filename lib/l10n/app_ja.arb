@@ -141,5 +141,22 @@
     "generationMillennial": "ミレニアル世代",
     "generationX": "X世代",
     "generationBabyBoomer": "ベビーブーマー世代",
-    "generationSilent": "サイレント世代"
+    "generationSilent": "サイレント世代",
+    "detailedTime": "詳細な時間",
+    "simpleTime": "シンプルな時間",
+    "showAge": "年齢を表示",
+    "hideAge": "年齢を非表示",
+    "customize": "カスタマイズ",
+    "showInfo": "情報を表示",
+    "hideInfo": "情報を非表示",
+    "resetAll": "すべてリセット",
+    "upgradeToPremium": "プレミアムにアップグレード",
+    "removeWatermark": "透かしを削除",
+    "removeWatermarkDescription": "Birthdate Plusの透かしなしで写真を共有",
+    "highQualityExport": "高品質エクスポート",
+    "highQualityExportDescription": "完璧な共有のために最高品質で写真をエクスポート",
+    "adFreeExperience": "広告なし体験",
+    "adFreeExperienceDescription": "クリーンで邪魔のないインターフェース",
+    "upgradeNowWithPrice": "今すぐアップグレード - ¥399",
+    "restorePurchases": "購入を復元"
 } 

@@ -11,6 +11,14 @@
     "theme": "Tema",
     "darkMode": "Modo Oscuro",
     "lightMode": "Modo Claro",
+    "detailedTime": "Tiempo Detallado",
+    "simpleTime": "Tiempo Simple",
+    "showAge": "Mostrar Edad",
+    "hideAge": "Ocultar Edad",
+    "customize": "Personalizar",
+    "showInfo": "Mostrar Información",
+    "hideInfo": "Ocultar Información",
+    "resetAll": "Restablecer Todo",
     "createBeautifulCards": "Crear Hermosas\nTarjetas de Cumpleaños",
     "discoverFacts": "Descubre hechos fascinantes sobre tu cumpleaños y crea tarjetas compartibles impresionantes.",
     "basicFeatures": "Características Básicas",
@@ -76,17 +84,22 @@
     "week": "Semana",
     "weeks": "Semanas",
     "choosePhoto": "Elegir una Foto",
-    "yearsAndDays": "{years} años y {days} días",
-    "@yearsAndDays": {
-        "placeholders": {
-            "years": {
-                "type": "int"
-            },
-            "days": {
-                "type": "int"
-            }
-        }
-    },
+    "generationBeta": "Generación Beta",
+    "generationAlpha": "Generación Alfa",
+    "generationZ": "Generación Z",
+    "generationMillennial": "Generación Millennial",
+    "generationX": "Generación X",
+    "generationBabyBoomer": "Generación Baby Boomer",
+    "generationSilent": "Generación Silenciosa",
+    "upgradeToPremium": "Actualizar a Premium",
+    "removeWatermark": "Eliminar Marca de Agua",
+    "removeWatermarkDescription": "Comparte tus fotos sin la marca de agua de Birthdate Plus",
+    "highQualityExport": "Exportación en Alta Calidad",
+    "highQualityExportDescription": "Exporta tus fotos en la más alta calidad para compartir perfectamente",
+    "adFreeExperience": "Experiencia sin Anuncios",
+    "adFreeExperienceDescription": "Disfruta de una interfaz limpia, sin distracciones",
+    "upgradeNowWithPrice": "Actualizar Ahora - $2.99",
+    "restorePurchases": "Restaurar Compras",
     "birthstoneGarnet": "Granate",
     "birthstoneAmethyst": "Amatista",
     "birthstoneAquamarine": "Aguamarina",
@@ -99,6 +112,7 @@
     "birthstoneOpal": "Ópalo",
     "birthstoneTopaz": "Topacio",
     "birthstoneTurquoise": "Turquesa",
+    
     "flowerCarnation": "Clavel",
     "flowerViolet": "Violeta",
     "flowerDaffodil": "Narciso",
@@ -111,6 +125,7 @@
     "flowerMarigold": "Caléndula",
     "flowerChrysanthemum": "Crisantemo",
     "flowerPoinsettia": "Flor de Pascua",
+    
     "zodiacAries": "Aries",
     "zodiacTaurus": "Tauro",
     "zodiacGemini": "Géminis",
@@ -123,6 +138,7 @@
     "zodiacCapricorn": "Capricornio",
     "zodiacAquarius": "Acuario",
     "zodiacPisces": "Piscis",
+    
     "chineseMonkey": "Mono",
     "chineseRooster": "Gallo",
     "chineseDog": "Perro",
@@ -134,5 +150,17 @@
     "chineseDragon": "Dragón",
     "chineseSnake": "Serpiente",
     "chineseHorse": "Caballo",
-    "chineseGoat": "Cabra"
+    "chineseGoat": "Cabra",
+    
+    "yearsAndDays": "{years} años y {days} días",
+    "@yearsAndDays": {
+        "placeholders": {
+            "years": {
+                "type": "int"
+            },
+            "days": {
+                "type": "int"
+            }
+        }
+    }
 } 

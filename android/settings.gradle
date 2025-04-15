@@ -23,3 +23,13 @@ plugins {
 }
 
 include ":app"
+
+gradle.beforeProject { project ->
+    if (project.hasProperty('android')) {
+        project.android {
+            if (!project.hasProperty('namespace') && project.name == 'image_gallery_saver') {
+                namespace = "com.example.image_gallery_saver"
+            }
+        }
+    }
+}

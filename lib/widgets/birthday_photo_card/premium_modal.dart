@@ -78,16 +78,16 @@ class _PremiumModalState extends State<PremiumModal> {
     if (l10n == null) {
       // Fallback to English strings if localization is not available
       return AlertDialog(
-        title: Text('Premium Features'),
-        content: Text('Unlock all premium features to enhance your experience.'),
+        title: const Text('Premium Features'),
+        content: const Text('Unlock all premium features to enhance your experience.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: widget.onUpgrade,
-            child: Text('Upgrade'),
+            child: const Text('Upgrade'),
           ),
         ],
       );
@@ -98,35 +98,35 @@ class _PremiumModalState extends State<PremiumModal> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: BoxDecoration(
-        color: isDarkMode ? Color(0xFF1A1A1A) : Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: isDarkMode ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
           // Header with gradient
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [Colors.purple.shade500, Colors.blue.shade500],
               ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   l10n.upgradeToPremium,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
+                  icon: const Icon(Icons.close, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -136,7 +136,7 @@ class _PremiumModalState extends State<PremiumModal> {
           // Content
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -146,28 +146,28 @@ class _PremiumModalState extends State<PremiumModal> {
                     description: l10n.removeWatermarkDescription,
                     isDarkMode: isDarkMode,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   _buildFeatureItem(
                     icon: Icons.high_quality,
                     title: l10n.highQualityExport,
                     description: l10n.highQualityExportDescription,
                     isDarkMode: isDarkMode,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   _buildFeatureItem(
                     icon: Icons.block,
                     title: l10n.adFreeExperience,
                     description: l10n.adFreeExperienceDescription,
                     isDarkMode: isDarkMode,
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   
                   if (_error != null)
                     Padding(
-                      padding: EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
                         _error!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14,
                         ),
@@ -175,19 +175,19 @@ class _PremiumModalState extends State<PremiumModal> {
                     ),
                   
                   // Upgrade button
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: _isLoading ? null : () => _handleUpgrade(context),
                       child: _isLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -197,7 +197,7 @@ class _PremiumModalState extends State<PremiumModal> {
                             )
                           : Text(
                               l10n.upgradeNowWithPrice,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -206,7 +206,7 @@ class _PremiumModalState extends State<PremiumModal> {
                     ),
                   ),
                   
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   
                   // Restore purchases button
                   Center(
@@ -239,7 +239,7 @@ class _PremiumModalState extends State<PremiumModal> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isDarkMode ? Colors.purple.withOpacity(0.2) : Colors.purple.shade50,
             borderRadius: BorderRadius.circular(12),
@@ -250,7 +250,7 @@ class _PremiumModalState extends State<PremiumModal> {
             size: 24,
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,7 +263,7 @@ class _PremiumModalState extends State<PremiumModal> {
                   color: isDarkMode ? Colors.white : Colors.black87,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 description,
                 style: TextStyle(

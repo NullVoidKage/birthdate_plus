@@ -24,6 +24,8 @@ import '../viewmodels/age_calculator_viewmodel.dart';
 import '../providers/language_provider.dart';
 
 class BirthdayPhotoCard extends StatefulWidget {
+  const BirthdayPhotoCard({super.key});
+
   @override
   _BirthdayPhotoCardState createState() => _BirthdayPhotoCardState();
 }
@@ -46,7 +48,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
   final AdMobService _adMobService = AdMobService();
 
   // Cake animation variables
-  List<CakeAnimation> _cakes = [];
+  final List<CakeAnimation> _cakes = [];
   Timer? _cakeTimer;
   bool _showCakes = false;
 
@@ -66,7 +68,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
     _animationController.forward();
 
     // Start cake animation timer
-    _cakeTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _cakeTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (_showCakes && mounted) {
         setState(() {
           _updateCakes();
@@ -97,6 +99,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
 
   Future<void> _loadPreferences() async {
     final prefs = await PreferencesService.loadPreferences();
+    print('Loaded preferences in BirthdayPhotoCard: $prefs');
     setState(() {
       _fontSize = prefs['fontSize'];
       _opacity = prefs['opacity'];
@@ -104,6 +107,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
       _isInfoVisible = prefs['isInfoVisible'];
       _isObfuscated = prefs['isObfuscated'];
       _selectedDate = prefs['selectedDate'];
+      print('Updated selectedDate to: ${_selectedDate?.toIso8601String()}');
     });
   }
 
@@ -126,7 +130,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
         });
         
         // Short delay to ensure UI updates
-        await Future.delayed(Duration(milliseconds: 50));
+        await Future.delayed(const Duration(milliseconds: 50));
         
         // Read the image file as bytes
         final Uint8List imageBytes = await image.readAsBytes();
@@ -165,7 +169,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
         
         if (!adCompleted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Please watch the ad to save your photo'),
               backgroundColor: Colors.red,
             ),
@@ -181,7 +185,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
       print('Starting save process...');
 
       // Short delay to ensure UI updates before capture
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       final file = await ImageService.captureWidgetAsImage(_globalKey);
       if (file != null) {
@@ -226,7 +230,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                   color: isDarkMode ? Colors.white70 : Colors.black87,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
                 height: 200,
                 width: 200,
@@ -288,7 +292,9 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
   }
 
   Future<void> _resetAll() async {
+    // Clear preferences except language
     await PreferencesService.clearAllPreferences();
+    // Clear saved image
     await ImageService.clearSavedImage();
     
     setState(() {
@@ -299,6 +305,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
       _showDetailedTime = false;
       _isInfoVisible = true;
       _isObfuscated = false;
+      // Note: We don't reset language settings here
     });
   }
 
@@ -438,10 +445,21 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
     });
   }
 
+  void _onDateSelected(DateTime? date) async {
+    print('Date selected: ${date?.toIso8601String()}');
+    setState(() {
+      _selectedDate = date;
+    });
+    await _savePreferences();
+    // Force rebuild of info panel
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
+        print('Building BirthdayPhotoCard with date: ${_selectedDate?.toIso8601String()}');
         return Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: true,
@@ -470,9 +488,11 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
     final viewModel = Provider.of<AgeCalculatorViewModel>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
-    final backgroundColor = isDarkMode ? Color(0xFF1A1A1A) : Color(0xFFF5F5F5);
-    final accentColor = isDarkMode ? Color(0xFFE0E0E0) : Color(0xFF333333);
+    final backgroundColor = isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFF5F5F5);
+    final accentColor = isDarkMode ? const Color(0xFFE0E0E0) : const Color(0xFF333333);
     final overlayColor = isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3);
+
+    print('Building body with date: ${_selectedDate?.toIso8601String()}');
 
     final ageText = _selectedDate != null 
         ? date_utils.DateUtils.calculateAgeText(context, _selectedDate!)
@@ -503,7 +523,7 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
                                     blurRadius: 20,
-                                    offset: Offset(0, 10),
+                                    offset: const Offset(0, 10),
                                   ),
                                 ],
                               ),
@@ -526,15 +546,11 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                       bottom: 80,
                       left: 20,
                       right: 20,
-                      child: BirthdayInfoPanel(
-                        fontSize: _fontSize,
-                        textColor: _textColor,
-                        opacity: _opacity,
-                        showDetailedTime: _showDetailedTime,
-                        isInfoVisible: _isInfoVisible,
-                        selectedDate: _selectedDate,
-                        ageText: ageText,
-                      ),
+                      child: _selectedDate != null
+                        ? BirthdayInfoPanel(
+                            birthDate: _selectedDate!,
+                          )
+                        : const SizedBox.shrink(),
                     ),
                     Positioned(
                       top: 150,
@@ -543,14 +559,14 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                         future: PremiumService.isPremium(),
                         builder: (context, snapshot) {
                           final isPremium = snapshot.data ?? false;
-                          if (isPremium) return SizedBox.shrink();
+                          if (isPremium) return const SizedBox.shrink();
                           
                           return FadeTransition(
                             opacity: _fadeAnimation,
                             child: RotatedBox(
                               quarterTurns: 1,
                               child: Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                   horizontal: 20,
                                 ),
@@ -583,18 +599,13 @@ class _BirthdayPhotoCardState extends State<BirthdayPhotoCard>
                         left: 0,
                         right: 0,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: BirthdayActionButtons(
                             onPickImage: _pickImage,
                             onSave: _saveImage,
                             hasImage: _image != null,
                             selectedDate: _selectedDate,
-                            onDateSelected: (date) {
-                              setState(() {
-                                _selectedDate = date;
-                              });
-                              _savePreferences();
-                            },
+                            onDateSelected: _onDateSelected,
                           ),
                         ),
                       ),
